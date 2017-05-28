@@ -11,49 +11,33 @@ import socket
 
 class socket_config(object):
 
+    _client_sock = 0
+    _addr = 0
+    
     def __init__(self):
-        print "hello socket"
+        
         #socket members
-        self._client_sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM) #creating a socket for UDP
-        self._client_sock.setblocking(0) #making non-blocking
-        self._client_sock.settimeout(5) #setting the timeout to 5 secs
+        socket_config._client_sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM) #creating a socket for UDP
+        socket_config._client_sock.setblocking(0) #making non-blocking
+        socket_config._client_sock.settimeout(5) #setting the timeout to 5 secs
 
         host = "192.168.0.102"; port = 2017 #For external communication TODO: Make this XML readable
-        self._addr = (host,port)
+        socket_config._addr = (host,port)
+
+    def __del__(self):
+
+        socket_config._client_sock.close()
         
 
 class signal(socket_config):    
 
-    def __init__(self,name,address,partition,sock_bit):
-        print 'signal created'
-        self._client_sock = sock_bit._client_sock
-        self._addr = sock_bit._addr
+    def __init__(self,name,address,partition):        
         
         #signal members
         self.name = name
         self.__address = address
         self.__partition = partition
-        self.__value = 0
-
-        '''
-        #socket members
-        self.__client_sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM) #creating a socket for UDP
-        self.__client_sock.setblocking(0) #making non-blocking
-        self.__client_sock.settimeout(5) #setting the timeout to 5 secs
-        
-        #Address of the Server
-        #host = "127.0.0.1"; port = 12345 #For local host communication
-        host = "192.168.0.104"; port = 2017 #For external communication TODO: Make this XML readable
-        self.__addr = (host,port)
-
-        self.__message = "Naveen and Swathi" #Sending this message
-        '''
-        
-
-##    def __del__(self):
-##        
-##        self._client_sock.close()
-##        
+        self.__value = 0    
 
     def read(self):
         '''
@@ -65,13 +49,13 @@ class signal(socket_config):
         #print "Reading " + self.name + '...'       
         payload = self.construct_payload(1) #Constructing the payload
         
-        send = self._client_sock.sendto(payload , self._addr)
+        send = socket_config._client_sock.sendto(payload , socket_config._addr)
 
         try:
-                self._data,self._addr2 = self._client_sock.recvfrom(1024) #receiving the address from the server
+                self._data,self._addr2 = socket_config._client_sock.recvfrom(1024) #receiving the address from the server
                 #print "Data received from the server: " + str(self.__data)                    
         except socket.timeout:
-                #print "Timeout!"
+                print "Timeout!"
                 return None
 
         return int(self._data)
@@ -86,10 +70,10 @@ class signal(socket_config):
         print "Writing " + str(new_value) + " to " + self.name + '...'
         payload = self.construct_payload(2,new_value)
 
-        send = self._client_sock.sendto(payload , self._addr)
+        send = socket_config._client_sock.sendto(payload , socket_config._addr)
 
         try:
-                self._data,self._addr2 = self._client_sock.recvfrom(1024) #receiving the address from the server
+                self._data,self._addr2 = socket_config._client_sock.recvfrom(1024) #receiving the address from the server
                 print "Data received from the server: " + str(self._data)                    
         except socket.timeout:
                 print "Timeout!"

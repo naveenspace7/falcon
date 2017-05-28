@@ -12,7 +12,7 @@ import socket
 class socket_config(object):
 
     def __init__(self):
-        
+        print "hello socket"
         #socket members
         self._client_sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM) #creating a socket for UDP
         self._client_sock.setblocking(0) #making non-blocking
@@ -24,15 +24,18 @@ class socket_config(object):
 
 class signal(socket_config):    
 
-    def __init__(self,name,address,partition):
+    def __init__(self,name,address,partition,sock_bit):
         print 'signal created'
-        '''
+        self._client_sock = sock_bit._client_sock
+        self._addr = sock_bit._addr
+        
         #signal members
         self.name = name
         self.__address = address
         self.__partition = partition
         self.__value = 0
 
+        '''
         #socket members
         self.__client_sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM) #creating a socket for UDP
         self.__client_sock.setblocking(0) #making non-blocking
@@ -103,9 +106,9 @@ class signal(socket_config):
         '''
 
         if cmd == 1:
-            command = (self._addr << 3) | cmd
+            command = (self.__address << 3) | cmd
         elif cmd == 2:
-            command = (value << 11) | (self._addr << 3) | cmd
+            command = (value << 11) | (self.__address << 3) | cmd
 
         command = str(command)
         

@@ -10,7 +10,7 @@ from signal_class import signal
 
 class IR(object):
 
-    def __init__(self):
+    def __init__(self,sockt):
 
         print "Building IR symbols..."
         connection = sqlite3.connect("E:\\Falcon\\Common\\Signals\\signals_database.db") # TODO: Remove the hardcoded path.
@@ -18,7 +18,7 @@ class IR(object):
         count = 0
 
         for each in cursor:            
-            temp_string = "self.{} = signal('{}',{},'{}')".format(each[0],each[0],each[1],each[2]) #replace this with signal class
+            temp_string = "self.{} = signal('{}',{},'{}',sockt)".format(each[0],each[0],each[1],each[2]) #replace this with signal class
             #print temp_string # Debug
             exec(temp_string)
             count += 1
@@ -33,7 +33,7 @@ class IR(object):
 
 class Speed(object):
 
-    def __init__(self):
+    def __init__(self,sockt):
 
         print "Building Speed symbols..."
         connection = sqlite3.connect("E:\\Falcon\\Common\\Signals\\signals_database.db")
@@ -41,7 +41,7 @@ class Speed(object):
         count = 0
 
         for each in cursor:        
-            temp_string = "self.{} = signal('{}',{},'{}')".format(each[0],each[0],each[1],each[2])
+            temp_string = "self.{} = signal('{}',{},'{}',sockt)".format(each[0],each[0],each[1],each[2])
             #print temp_string # Debug
             exec(temp_string)
             count += 1
@@ -56,7 +56,7 @@ class Speed(object):
 
 class Power(object):
 
-    def __init__(self):
+    def __init__(self,sockt):
 
         print "Building Wheel Power symbols..."
         connection = sqlite3.connect("E:\\Falcon\\Common\\Signals\\signals_database.db")
@@ -64,7 +64,7 @@ class Power(object):
         count = 0
 
         for each in cursor:        
-            temp_string = "self.{} = signal('{}',{},'{}')".format(each[0],each[0],each[1],each[2]) #replace this with signal class
+            temp_string = "self.{} = signal('{}',{},'{}',sockt)".format(each[0],each[0],each[1],each[2]) #replace this with signal class
             #print temp_string #debug
             exec(temp_string)
             count += 1
@@ -78,14 +78,14 @@ class Power(object):
 
 class USR(object):
 
-    def __init__(self):
+    def __init__(self,sockt):
         print "Building USR symbols..."
         connection = sqlite3.connect("E:\\Falcon\\Common\\Signals\\signals_database.db")
         cursor = connection.execute("SELECT * FROM signal WHERE signal.parent = 'usr'")
         count = 0
 
         for each in cursor:        
-            temp_string = "self.{} = signal('{}',{},'{}')".format(each[0],each[0],each[1],each[2]) #replace this with signal class
+            temp_string = "self.{} = signal('{}',{},'{}',sockt)".format(each[0],each[0],each[1],each[2]) #replace this with signal class
             #print temp_string #debug
             exec(temp_string)
             count += 1
@@ -99,7 +99,7 @@ class USR(object):
 
 class Config(object):
 
-    def __init__(self):
+    def __init__(self,sockt):
 
         print "Building CONFIG symbols..."
 
@@ -108,7 +108,7 @@ class Config(object):
         count = 0
 
         for each in cursor:        
-            temp_string = "self.{} = signal('{}',{},'{}')".format(each[0],each[0],each[1],each[2])
+            temp_string = "self.{} = signal('{}',{},'{}',sockt)".format(each[0],each[0],each[1],each[2])
             #print temp_string #debug
             exec(temp_string)
             count += 1
@@ -122,7 +122,7 @@ class Config(object):
 
 class Angle(object):
 
-    def __init__(self):
+    def __init__(self,sockt):
         
         print "Building Angle symbols..."
         connection = sqlite3.connect("E:\\Falcon\\Common\\Signals\\signals_database.db")
@@ -130,7 +130,7 @@ class Angle(object):
         count = 0
 
         for each in cursor:        
-            temp_string = "{} = signal('{}',{},'{}')".format(each[0],each[0],each[1],each[2])
+            temp_string = "{} = signal('{}',{},'{}',sockt)".format(each[0],each[0],each[1],each[2])
             #print temp_string #debug
             exec(temp_string)
             count += 1

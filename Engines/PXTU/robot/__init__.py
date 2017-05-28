@@ -1,4 +1,7 @@
-import base
-print "Imported base"
+from base import Base
 
-del angle, ir, power, speed, usr, config
+base = Base()
+
+# Use base equivalent objects here
+
+del Base # To eliminate stray references

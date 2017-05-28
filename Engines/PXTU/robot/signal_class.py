@@ -14,14 +14,14 @@ class socket_config(object):
     _client_sock = 0
     _addr = 0
     
-    def __init__(self):
+    def __init__(self,ip_addr,dst_port):
         
         #socket members
         socket_config._client_sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM) #creating a socket for UDP
         socket_config._client_sock.setblocking(0) #making non-blocking
         socket_config._client_sock.settimeout(5) #setting the timeout to 5 secs
 
-        host = "192.168.0.102"; port = 2017 #For external communication TODO: Make this XML readable
+        host = ip_addr; port = dst_port #For external communication TODO: Make this XML readable
         socket_config._addr = (host,port)
 
     def __del__(self):

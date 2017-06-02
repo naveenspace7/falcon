@@ -31,13 +31,14 @@ class socket_config(object):
 
 class signal(socket_config):    
 
-    def __init__(self,name,address,partition):        
+    def __init__(self,name,address,partition,desc=None):        
         
         #signal members
         self.name = name
         self.__address = address
         self.__partition = partition
-        self.__value = 0    
+        self.__value = 0
+        self.__desc = desc
 
     def read(self):
         '''
@@ -98,12 +99,22 @@ class signal(socket_config):
         
         return command+'\0'
 
+    @property
+    def desc(self):
+
+        return self.__desc                    
+
     def __repr__(self):
 
         display_string = "<signal-object: name=%s, partition=%s, address=%d, value=%d>"%(
             self.name,self.__partition,self.__address,self.__value)
         
         return display_string
+
+    #TODO: return the signal name with its description. Nice to have.
+##    def __str__(self):
+##
+##        return ''
     
 if __name__ == "__main__":
         

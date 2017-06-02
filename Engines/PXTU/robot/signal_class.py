@@ -97,7 +97,13 @@ class signal(socket_config):
         command = str(command)
         
         return command+'\0'
+
+    def __repr__(self):
+
+        display_string = "<signal-object: name=%s, partition=%s, address=%d, value=%d>"%(
+            self.name,self.__partition,self.__address,self.__value)
         
+        return display_string
     
 if __name__ == "__main__":
         

@@ -10,7 +10,7 @@ engine_6,7,config,0,0,int32,input output,PID of eng6
 engine_7,8,config,0,0,int32,input output,PID of eng7
 engine_8,9,config,0,0,int32,input output,PID of eng8
 engine_9,10,config,0,0,int32,input output,PID of eng9
-engine_10,11,config,0,0,int32,input output,PID of eng10
+timestamp,11,config,0,0,int32,input output,timestamp for data between engine and arduino
 usr_right,21,usr,0,0,int32,input,Set of ultrasonic sensor readings on the right
 usr_left,22,usr,0,0,int32,input,Set of ultrasonic sensor reading on the left
 usr_front,23,usr,0,0,int32,input,Set of ultrasonic sensor readings on the front

@@ -27,7 +27,7 @@ private:
 	int fd, baud;
 	int timestamp, stale_counter;
 public:
-	//bool rw = true; // true = read, false = write
+	bool rw = true; // true = read, false = write
 	int current_timestamp; // The new timestamp for the upcoming transaction
 	arduino();
 	// Serial attributes

@@ -4,17 +4,27 @@ using namespace std;
 
 void compute(int signum)
 {
-	// Do the run twice, once for reading and for writing
 	Engine.compute_start();
 	Engine.setLock(1);
+	
+	// Do the run twice, once for reading and for writing
+	if(Engine.rw) // Reading data from arduino base
+	{
+		Engine.verify_timestamp();
+		cout << "Compute function called inside read arduino\n";
+	}
 
-	Engine.verify_timestamp();
-
- 	cout << "Compute function called inside arduino\n";
+	else // Writing data to Arduino base
+	{		
+		cout << "Compute function called inside write arduino\n";
+		// TODO: Get some confirmation		
+	}
 
  	Engine.setLock(0);
  	Engine.compute_end();
  	Engine.print_duration();
+
+ 	Engine.rw = !Engine.rw;
 }
 
 void arduino::verify_timestamp() // Get the timestamp and compare it with the present timestamp.
@@ -35,6 +45,7 @@ void arduino::verify_timestamp() // Get the timestamp and compare it with the pr
 
 	else // Updated data received
 	{
+		timestamp = current_timestamp; // Updating the timestamp
 		stale_counter = 0;
 	}
 }

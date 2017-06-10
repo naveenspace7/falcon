@@ -10,7 +10,7 @@ using namespace pugi;
 signals::signals(string name,int*&Base)
 {
 	xml_document doc;
-	xml_parse_result result = doc.load_file("signals.xml");
+	xml_parse_result result = doc.load_file("../../../Common/Signals/signals.xml");
 	//address = base + address;	
 	base = Base;
 

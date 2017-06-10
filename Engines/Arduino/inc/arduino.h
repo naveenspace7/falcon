@@ -23,7 +23,9 @@ class arduino: public engineFrame
 {
 private:
 	int fd, baud;
+	int timestamp, stale_counter;
 public:
+	int current_timestamp;
 	arduino();
 	// Serial attributes
 	void serial(const char*, int);
@@ -38,6 +40,7 @@ public:
 	// Engine attributes
 	static void compute(int);
 	void init();
+	void verify_timestamp(int);
 	
 };
 
@@ -61,6 +64,8 @@ shared_ptr<signals> angle;
 shared_ptr<signals> angle_cmd;
 
 shared_ptr<signals> lock;
+
+shared_ptr<signals> timestamp_arduino;
 
 arduino Engine;
 

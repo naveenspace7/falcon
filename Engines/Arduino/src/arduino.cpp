@@ -8,10 +8,31 @@ using namespace std;
 void compute(int signum)
 {
 	Engine.setLock(1);
+	
+	Engine.current_timestamp = Engine.query(timestamp_arduino->address);
+	timestamp_arduino->set(Engine.current_timestamp);
+	Engine.verify_timestamp(Engine.current_timestamp);
 
  	cout << "Compute function called inside arduino\n";
 
  	Engine.setLock(0);
+}
+
+void arduino::verify_timestamp(int curr_ts)
+{
+	if(timestamp >= curr_ts)
+	{
+		cout << "Stale data received from Arduino base.\n";
+		stale_counter++;
+	}
+	else
+	{
+		if(stale_counter == 5)
+		{
+			cout << "Looks like Arduino base is down.\n";
+			// TODO: take any corrective steps.
+		}
+	}
 }
 
 void arduino::serial(const char* dev_name, int in_baud) // : baud(in_baud)
@@ -31,7 +52,7 @@ int arduino::Send(int n) //(const int fd, const char *s)
 	char temp_buff[10];
 	sprintf(temp_buff,"%d\r",n);	  		
 	int len = len_of(temp_buff);
-	return write (fd, temp_buff, len) ;
+	return write (fd, temp_buff, len);
 }
 
 int arduino::len_of(char* temp)
@@ -46,7 +67,6 @@ int arduino::len_of(char* temp)
 	}
 	return len+1;
 }
-
 
 int arduino::Open(const char* device)
 {
@@ -121,6 +141,7 @@ int arduino::Open(const char* device)
 arduino::arduino() : engineFrame("arduino_engine",1)
 { 
  serial("/dev/ttyUSB0",9600);
+ timestamp = 0;
 }
 
 int arduino::get_ser_data()
@@ -189,6 +210,8 @@ void arduino::init()
 
 	angle = make_shared<signals> ("angle",base);
 	angle_cmd = make_shared<signals> ("angle_cmd",base);
+
+	timestamp_arduino = make_shared<signals> ("timestamp",base);
 }
 
 int main()

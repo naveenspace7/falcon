@@ -16,6 +16,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <vector>
+#include "arduino.h"
+#include <signal.h>
 
 using namespace std;
 
@@ -25,7 +27,8 @@ private:
 	int fd, baud;
 	int timestamp, stale_counter;
 public:
-	int current_timestamp;
+	//bool rw = true; // true = read, false = write
+	int current_timestamp; // The new timestamp for the upcoming transaction
 	arduino();
 	// Serial attributes
 	void serial(const char*, int);
@@ -40,7 +43,7 @@ public:
 	// Engine attributes
 	static void compute(int);
 	void init();
-	void verify_timestamp(int);
+	void verify_timestamp();
 	
 };
 

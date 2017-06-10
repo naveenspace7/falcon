@@ -1,37 +1,41 @@
-#include "engineFrame.h"
-#include <iostream>
 #include "arduino.h"
-#include <signal.h>
 
 using namespace std;
 
 void compute(int signum)
 {
+	// Do the run twice, once for reading and for writing
+	Engine.compute_start();
 	Engine.setLock(1);
-	
-	Engine.current_timestamp = Engine.query(timestamp_arduino->address);
-	timestamp_arduino->set(Engine.current_timestamp);
-	Engine.verify_timestamp(Engine.current_timestamp);
+
+	Engine.verify_timestamp();
 
  	cout << "Compute function called inside arduino\n";
 
  	Engine.setLock(0);
+ 	Engine.compute_end();
+ 	Engine.print_duration();
 }
 
-void arduino::verify_timestamp(int curr_ts)
-{
-	if(timestamp >= curr_ts)
+void arduino::verify_timestamp() // Get the timestamp and compare it with the present timestamp.
+{	
+	current_timestamp = query(timestamp_arduino->address); // Asking the Arduino base for the timestamp update.	
+
+	if(timestamp >= current_timestamp)
 	{
 		cout << "Stale data received from Arduino base.\n";
 		stale_counter++;
-	}
-	else
-	{
-		if(stale_counter == 5)
+
+		if(stale_counter % 5 == 0) // If stale data is received more than 5 times raise an error
 		{
-			cout << "Looks like Arduino base is down.\n";
-			// TODO: take any corrective steps.
+			cout << "ERROR: Looks like Arduino base is down.\n";
+			// TODO: take any corrective steps HERE
 		}
+	}
+
+	else // Updated data received
+	{
+		stale_counter = 0;
 	}
 }
 
@@ -212,14 +216,14 @@ void arduino::init()
 	angle_cmd = make_shared<signals> ("angle_cmd",base);
 
 	timestamp_arduino = make_shared<signals> ("timestamp",base);
+
+	cout << "Signals init done. Engine ready to run.\n";
 }
 
 int main()
 {
- arduino Engine;
  signal(SIGINT,compute);
- //Engine.init();
- cout << "Engine ready to run:\n";
- while(1);
+ Engine.init();
+ while(1); // Keep the process alive and do nothing until compute is called
  return 0;
 }

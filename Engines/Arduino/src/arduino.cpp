@@ -2,13 +2,15 @@
 
 using namespace std;
 
-void compute(int signum)
+/* This function runs only when called by the master.
+   Should run twice in every frame */
+void compute(int signal_number)
 {
-	Engine.compute_start();
-	Engine.setLock(1);
+	Engine.compute_start();     // Consumes the start time
+	Engine.setLock(1);          // Locks the SHM TODO: Put this into compute_start
 	
-	// Do the run twice, once for reading and for writing
-	if(Engine.rw) // Reading data from arduino base
+	// Alternates between Read and Write depending on variable Engine.rw
+	if(Engine.rw) // Reading data from Arduino base
 	{
 		Engine.obtain_datablock();
 		cout << "Compute function called inside read arduino\n";
@@ -17,30 +19,34 @@ void compute(int signum)
 	else // Writing data to Arduino base
 	{		
 		cout << "Compute function called inside write arduino\n";
-		// TODO: Get some confirmation		
+		// TODO: Obtain some confirmation that data has been written to Base
 	}
 
- 	Engine.setLock(0);
- 	Engine.compute_end();
- 	Engine.print_duration();
+ 	Engine.setLock(0);			// Unlocks the SHM TODO: Put this into compute_end
+ 	Engine.compute_end();		// Consumes the stop time
+ 	Engine.print_duration();	// Print the run-time duration TODO: Put this into compute_end
 
- 	Engine.rw = !Engine.rw;
+ 	Engine.rw = !Engine.rw;		// Toggle between Read and Write TODO: Put this into compute_end
 }
 
+/* Obtains the data block from the Arduino base
+   This function packs the data into vector and writes into the signal SHM. */
 void arduino::obtain_datablock()
 {
 	string serial_data = "";
 
-	serial_data = query(1);
-	serial_data = ""; // Debug purpose TODO: change this back	
-	if(serial_data != "")
-	{
+	serial_data = query(1);      // Query the Arduino base for data block
+	serial_data = "";            // HACK: query is adding bad data into this
+
+	if(serial_data != "")        // Ignore if the string is blank
+	{		
 		vector<int> sensor_values = decode_string(serial_data);
 
-		current_timestamp = sensor_values[0];
+		current_timestamp = sensor_values[0]; // Obtain the timestamp
 
 		verify_timestamp();
 		
+		// Setting the signals into the SHM
 		timestamp_arduino->set(current_timestamp);
 		usr_fr->set(sensor_values[1]);
 		usr_rt->set(sensor_values[2]);
@@ -53,13 +59,21 @@ void arduino::obtain_datablock()
 		cout << "No data received from Arduino\n";	
 }
 
+/* Takes the string received from Arduino base, strips it 
+   and packs them into vector.*/
 vector<int> arduino::decode_string(const string& rx_string)
 {
-	cout << "Decoding string: " << rx_string << endl;
+	/*
+	Format of string data received: ";14;23;45;26;\0"
+	Example: ";14;23;45;26;\0" ---> {14,23,45,26}
+	*/
+	cout << "Decoding string: " << rx_string << endl; // Debug
+	// str_pt - index pointer, start - word start index, end - word end index
 	int str_pt = 0, start = 0, end = 0;
+	// Obtaining word - true:word started false: word not started 
  	bool s_bool = false;
-	string sub_str;
-	vector<int> main_vec;
+	string sub_str;   // Substring holder
+	vector<int> value_vector;
  	while(1)
  	{
   		if(rx_string[str_pt] != '\0')
@@ -68,8 +82,8 @@ vector<int> arduino::decode_string(const string& rx_string)
    			{
 			    end = str_pt - 1;
 			    sub_str = rx_string.substr(start,end-start+1);
-				//cout << sub_str << endl;
-    			main_vec.push_back(stoi(sub_str));
+				//cout << sub_str << endl; // Debug
+    			value_vector.push_back(stoi(sub_str));
     			s_bool = false;
    			}
    		else if(rx_string[str_pt] == ';' && s_bool == false)
@@ -84,9 +98,11 @@ vector<int> arduino::decode_string(const string& rx_string)
   		else
    			break;
  	}
- 	return main_vec;
+ 	return value_vector;
 }
 
+/* Checking the timestamp of current transaction.
+   Reports when stale data is received */
 void arduino::verify_timestamp() // Get the timestamp and compare it with the present timestamp.
 {	
 	if(timestamp >= current_timestamp)
@@ -108,6 +124,7 @@ void arduino::verify_timestamp() // Get the timestamp and compare it with the pr
 	}
 }
 
+/* Defining serial port and opening */
 void arduino::serial(const char* dev_name, int in_baud) // : baud(in_baud)
 {	
 	baud = in_baud;
@@ -119,7 +136,8 @@ void arduino::Close()
 	close(fd);
 }
 
-int arduino::Send(int n) //(const int fd, const char *s)
+/* Send a number to the destination Arduino base */
+int arduino::Send(int n)
 {
 	//n is a number but we need the string version of it
 	char temp_buff[10];
@@ -128,6 +146,7 @@ int arduino::Send(int n) //(const int fd, const char *s)
 	return write (fd, temp_buff, len);
 }
 
+/* Measure the length of the char array by count chars until '\0' */
 int arduino::len_of(char* temp)
 {
 	int len = 0;
@@ -141,6 +160,7 @@ int arduino::len_of(char* temp)
 	return len+1;
 }
 
+/* Configure the serial connection */
 int arduino::Open(const char* device)
 {
 	cout << "Device: " << device << endl;
@@ -211,12 +231,14 @@ int arduino::Open(const char* device)
 	return 1;
 }
 
-arduino::arduino() : engineFrame("arduino_engine",1)
+/* Instantiating the new engine */
+arduino::arduino() : engineFrame("arduino_engine",1) // 1 is the engine ID
 { 
- serial("/dev/ttyUSB0",9600);
- timestamp = 0;
+ serial("/dev/ttyUSB0",9600); // Giving the device file and baud rate
+ timestamp = 0;               // Resetting the timestamp
 }
 
+/* Obtain the string data from the Arduino base */
 string arduino::get_ser_data()
 {
 	char read_buffer[10];
@@ -241,6 +263,7 @@ string arduino::get_ser_data()
 	return reply;
 }
 
+/* Send a request ID and wait for the response */
 string arduino::query(int x)
 {
 	Send(x);
@@ -254,6 +277,7 @@ void arduino::test()
 	// Use this only for tests	
 }
 
+/* Periodically run this to test the connection to the base */
 int arduino::ping()
 {	
 	srand(static_cast<int>(getpid()));
@@ -266,6 +290,7 @@ int arduino::ping()
 		query(i);
 }
 
+/* Initialize all the signals */
 void arduino::init()
 {
 	usr_rt = make_shared<signals> ("usr_right",base);

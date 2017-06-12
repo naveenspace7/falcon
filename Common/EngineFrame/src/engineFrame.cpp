@@ -53,12 +53,16 @@ void engineFrame::compute_start()
 {
 	// Obtain the time at the start of compute function
 	start = chrono::high_resolution_clock::now();
+	setLock(1);
+	// TODO: Calculate the frequency and display here
 }
 
 void engineFrame::compute_end()
 {
 	// Obtain the time at the end of compute function
 	end = chrono::high_resolution_clock::now();	
+	setLock(0);
+	print_duration();	// Debug: Print the run-time duration
 }
 
 void engineFrame::print_duration()

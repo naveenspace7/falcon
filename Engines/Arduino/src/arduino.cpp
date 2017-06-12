@@ -6,8 +6,7 @@ using namespace std;
    Should run twice in every frame */
 void compute(int signal_number)
 {
-	Engine.compute_start();     // Consumes the start time
-	Engine.setLock(1);          // Locks the SHM TODO: Put this into compute_start
+	Engine.compute_start();     // Consumes the start time and locks the SHM
 	
 	// Alternates between Read and Write depending on variable Engine.rw
 	if(Engine.rw) // Reading data from Arduino base
@@ -21,12 +20,9 @@ void compute(int signal_number)
 		cout << "Compute function called inside write arduino\n";
 		// TODO: Obtain some confirmation that data has been written to Base
 	}
-
- 	Engine.setLock(0);			// Unlocks the SHM TODO: Put this into compute_end
- 	Engine.compute_end();		// Consumes the stop time
- 	Engine.print_duration();	// Print the run-time duration TODO: Put this into compute_end
-
- 	Engine.rw = !Engine.rw;		// Toggle between Read and Write TODO: Put this into compute_end
+ 	
+ 	Engine.compute_end();		// Consumes the stop time and unlocks the SHM
+ 	Engine.rw = !Engine.rw;		// Toggle between Read and Write
 }
 
 /* Obtains the data block from the Arduino base

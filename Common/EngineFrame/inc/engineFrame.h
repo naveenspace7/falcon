@@ -16,10 +16,10 @@ class engineFrame
   int state;
   int id;
   const int Lock = 0;
-  std::chrono::high_resolution_clock::time_point start;
-  std::chrono::high_resolution_clock::time_point end;
+  std::chrono::high_resolution_clock::time_point start, end, start_old;
+  //std::chrono::high_resolution_clock::time_point ;
   std::string engine_name;
-  //vector<duration>vec_time;
+  std::vector<int> vec_time;
  protected:
   int*base;
  public:
@@ -32,6 +32,7 @@ class engineFrame
   ~engineFrame();
   int getState();
   void setState(int);
+  int average_time(std::vector<int>);
   //void compute();
   //void on_exit(); // TODO: make the PID -1  
 };

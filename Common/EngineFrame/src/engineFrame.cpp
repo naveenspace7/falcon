@@ -55,6 +55,20 @@ void engineFrame::compute_start()
 	start = chrono::high_resolution_clock::now();
 	setLock(1);
 	// TODO: Calculate the frequency and display here
+	chrono::milliseconds time_taken = chrono::duration_cast<chrono::milliseconds>(start - start_old);
+	
+	vec_time.push_back(time_taken.count());
+
+	if(vec_time.size() == 5)
+		cout << engine_name <<" Running at frequency " << 1.0/average_time(vec_time) << " Hz."<< endl; // FIXME: Correct the frequency
+}
+
+int engineFrame::average_time(vector<int> time_vector)
+{
+	int temp_count = 0;
+	for(auto each : time_vector)	
+		temp_count += each;
+	return temp_count/time_vector.size(); // TODO: Write this to SHM, but first create a SHM variable for that.
 }
 
 void engineFrame::compute_end()
@@ -69,6 +83,5 @@ void engineFrame::print_duration()
 {
 	// Calculate the time taken to execute compute function
 	chrono::milliseconds time_taken = chrono::duration_cast<chrono::milliseconds>(end - start);
-	//vec_time.push_back(time_taken);	
 	cout << engine_name << ": Ran for " << time_taken.count() << " ms" << endl;	
 }

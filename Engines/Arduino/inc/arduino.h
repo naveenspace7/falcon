@@ -37,14 +37,15 @@ public:
 	void Close();
 	int len_of(char*);
 	int ping();
-	int query(int);
-	int get_ser_data();
+	string query(int);
+	string get_ser_data();
 	void test();
 	// Engine attributes
 	static void compute(int);
 	void init();
 	void verify_timestamp();
-	
+	void obtain_datablock();
+	vector<int> decode_string(const string&);
 };
 
 shared_ptr<signals> usr_rt;

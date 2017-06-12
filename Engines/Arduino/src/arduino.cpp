@@ -10,7 +10,7 @@ void compute(int signum)
 	// Do the run twice, once for reading and for writing
 	if(Engine.rw) // Reading data from arduino base
 	{
-		Engine.verify_timestamp();
+		Engine.obtain_datablock();
 		cout << "Compute function called inside read arduino\n";
 	}
 
@@ -27,10 +27,68 @@ void compute(int signum)
  	Engine.rw = !Engine.rw;
 }
 
+void arduino::obtain_datablock()
+{
+	string serial_data = "";
+
+	serial_data = query(1);
+	serial_data = ""; // Debug purpose TODO: change this back	
+	if(serial_data != "")
+	{
+		vector<int> sensor_values = decode_string(serial_data);
+
+		current_timestamp = sensor_values[0];
+
+		verify_timestamp();
+		
+		timestamp_arduino->set(current_timestamp);
+		usr_fr->set(sensor_values[1]);
+		usr_rt->set(sensor_values[2]);
+		usr_rr->set(sensor_values[3]);
+		usr_lt->set(sensor_values[4]);
+		angle->set(sensor_values[5]);	
+	}
+
+	else
+		cout << "No data received from Arduino\n";	
+}
+
+vector<int> arduino::decode_string(const string& rx_string)
+{
+	cout << "Decoding string: " << rx_string << endl;
+	int str_pt = 0, start = 0, end = 0;
+ 	bool s_bool = false;
+	string sub_str;
+	vector<int> main_vec;
+ 	while(1)
+ 	{
+  		if(rx_string[str_pt] != '\0')
+  		{
+   			if(rx_string[str_pt] == ';' && s_bool == true)
+   			{
+			    end = str_pt - 1;
+			    sub_str = rx_string.substr(start,end-start+1);
+				//cout << sub_str << endl;
+    			main_vec.push_back(stoi(sub_str));
+    			s_bool = false;
+   			}
+   		else if(rx_string[str_pt] == ';' && s_bool == false)
+   		{
+	    	start = str_pt + 1;
+	    	s_bool = true;
+	    	str_pt++;
+   		}
+   		else
+    		str_pt++;
+  		}
+  		else
+   			break;
+ 	}
+ 	return main_vec;
+}
+
 void arduino::verify_timestamp() // Get the timestamp and compare it with the present timestamp.
 {	
-	current_timestamp = query(timestamp_arduino->address); // Asking the Arduino base for the timestamp update.	
-
 	if(timestamp >= current_timestamp)
 	{
 		cout << "Stale data received from Arduino base.\n";
@@ -159,7 +217,7 @@ arduino::arduino() : engineFrame("arduino_engine",1)
  timestamp = 0;
 }
 
-int arduino::get_ser_data()
+string arduino::get_ser_data()
 {
 	char read_buffer[10];
 	int result;
@@ -178,15 +236,16 @@ int arduino::get_ser_data()
 		}		
 		usleep(10000);
 	}	
-	int reply = atoi(read_buffer);
+	//int reply = atoi(read_buffer);
+	string reply = string(read_buffer);
 	return reply;
 }
 
-int arduino::query(int x)
+string arduino::query(int x)
 {
 	Send(x);
-	int c = get_ser_data();
-	cout << "Rx data: " << c << endl;
+	string c = get_ser_data();
+	cout << "Rx data: " << c << endl; // Debugging
 	return c;
 }
 

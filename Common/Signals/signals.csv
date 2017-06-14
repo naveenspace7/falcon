@@ -22,6 +22,6 @@ power_l,41,power,0,0,int32,output,
 power_r,42,power,0,0,int32,output,
 ir_front,51,ir,0,0,discrete,input,Set of ir sensor readings on the front
 ir_rear,52,ir,0,0,discrete,input,Set of ir sensor readings on the rear
-angle,61,angle,0,360,int32,input,
-angle_cmd,62,angle,0,360,int32,output,
+angle,61,angle,0,360,int32,input,The angle reading from the magnetometer.
+angle_cmd,62,angle,0,360,int32,output,Angle commanded by the calculation engine.
 mode,71,config,0,0,int32,output,Mode the controls the autonomy

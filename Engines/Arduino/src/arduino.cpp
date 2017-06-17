@@ -229,9 +229,9 @@ int arduino::Open(const char* device)
 
 /* Instantiating the new engine */
 arduino::arduino() : engineFrame("arduino_engine",1) // 1 is the engine ID
-{ 
- serial("/dev/ttyUSB0",9600); // Giving the device file and baud rate
- timestamp = 0;               // Resetting the timestamp
+{
+	serial("/dev/ttyUSB0",9600); // Giving the device file and baud rate
+ 	timestamp = 0;               // Resetting the timestamp
 }
 
 /* Obtain the string data from the Arduino base */
@@ -313,8 +313,8 @@ void arduino::init()
 
 int main()
 {
- signal(SIGINT,compute);
- Engine.init();
- while(1); // Keep the process alive and do nothing until compute is called
- return 0;
+	signal(10,compute);
+	Engine.init();
+	while(1); // Keep the process alive and do nothing until compute is called
+	return 0;
 }

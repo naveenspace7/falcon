@@ -22,13 +22,13 @@ using namespace std;
 
 class Engine
 {
-private:
-	int status, pid, id;
-	const int SIZE = 400;
 public:
-	int run(void);
+	int status, pid, id;	
+	//void run(void);
+	Engine(int);
 };
 
 int *base = get_base();
+const int SIZE = 400;
 
 #endif

@@ -1,15 +1,15 @@
 Name,Address,Parent,Min,Max,Data-type,Input/Output,Comments
 lock,0,config,0,0,int32,input output,Used to lock the SHM
-engine_count,1,config,0,0,int32,input output,Used to count number of engine to be setup
-engine_1,2,config,0,0,int32,input output,PID of eng1
-engine_2,3,config,0,0,int32,input output,PID of eng2
-engine_3,4,config,0,0,int32,input output,PID of eng3
-engine_4,5,config,0,0,int32,input output,PID of eng4
-engine_5,6,config,0,0,int32,input output,PID of eng5
-engine_6,7,config,0,0,int32,input output,PID of eng6
-engine_7,8,config,0,0,int32,input output,PID of eng7
-engine_8,9,config,0,0,int32,input output,PID of eng8
-engine_9,10,config,0,0,int32,input output,PID of eng9
+engine_1,1,config,0,0,int32,input output,PID and status of eng1
+engine_2,2,config,0,0,int32,input output,PID and status of eng2
+engine_3,3,config,0,0,int32,input output,PID and status of eng3
+engine_4,4,config,0,0,int32,input output,PID and status of eng4
+engine_5,5,config,0,0,int32,input output,PID and status of eng5
+engine_6,6,config,0,0,int32,input output,PID and status of eng6
+engine_7,7,config,0,0,int32,input output,PID and status of eng7
+engine_8,8,config,0,0,int32,input output,PID and status of eng8
+engine_9,9,config,0,0,int32,input output,PID and status of eng9
+engine_10,10,config,0,0,int32,input output,PID and status of eng10
 timestamp,11,config,0,0,int32,input output,timestamp for data between engine and arduino
 usr_right,21,usr,0,0,int32,input,Set of ultrasonic sensor readings on the right
 usr_left,22,usr,0,0,int32,input,Set of ultrasonic sensor reading on the left

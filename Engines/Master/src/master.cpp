@@ -2,17 +2,14 @@
 
 using namespace std;
 
-void run(Engine eng)
-{	
-	kill(eng.pid,10); // Good to go
-	/*
+void Engine::run()
+{		
 	cout << "Running this or what " << *(base+id) << endl;
 
 	if(*(base+id) == pid) // Checking the status
 		kill(pid,10); // Good to go
 	else
-		cout << "Looks like the engine is paused. INFO: PID=" << pid << " Status=" << *(base+id) << endl;		
-		*/
+		cout << "Looks like the engine is paused. INFO: PID=" << pid << " Status=" << *(base+id) << endl;			
 }
 
 Engine::Engine(int temp_id)
@@ -25,28 +22,15 @@ Engine::Engine(int temp_id)
 }
 
 int main()
-{	
-	/*
-	int pid;
-	cin >> pid;
-	for(int i = 0; i<10; i++)
-	{
-		kill(pid,10);
-		usleep(3000000);
-	}
-	*/
-	
+{		
 	memset(base, 0, SIZE*sizeof(int));
 	cout << "Clearing the SHM" << endl;
 	Engine Arduino(1);
-	int pid;
-	cin >> pid;
+	usleep(1000000);	// Giving some time for the master to settle in
 
-	while(1) // Keep the process alive and do nothing until compute is called
-	{
-		//run(Arduino);
-//		int p = Arduino.pid;
-		kill(pid,10);
+	while(1)
+	{		
+		Arduino.run();	
 		usleep(1000000);
 	}
  	return 0;

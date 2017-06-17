@@ -313,8 +313,8 @@ void arduino::init()
 
 int main()
 {
-	signal(10,compute);
 	Engine.init();
+	signal(10,compute);
 	while(1); // Keep the process alive and do nothing until compute is called
 	return 0;
 }

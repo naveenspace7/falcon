@@ -7,8 +7,8 @@ engineFrame::engineFrame(string name, int id)
 	engine_name = name;
 	cout << "Initializing " + engine_name + " with ID: " << id << endl;
 	base = get_base(); // Obtain the base address for this engine
-	//if(id != 0)			
-	//	while(*(base+id) != 1);
+	if(id != 0)			
+		while(*(base+id) != 1);
 	*(base+id) = getpid(); // Put the engine process's PID into the predefine SHM node	
 	cout << "Master controller: starting " + engine_name << " with " << *(base+id) << endl;
 	

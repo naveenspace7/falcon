@@ -24,7 +24,7 @@ class Engine
 {
 public:
 	int status, pid, id;	
-	//void run(void);
+	void run(void);
 	Engine(int);
 };
 

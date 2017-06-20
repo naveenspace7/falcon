@@ -4,6 +4,9 @@
 #include "pugixml.hpp"
 #include <iostream>
 #include <string>
+#include <stdio.h>
+#include <cstring>
+#include <stdlib.h>
 
 class signals
 {

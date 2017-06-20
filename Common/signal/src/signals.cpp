@@ -1,8 +1,5 @@
-#include <iostream>
-#include <stdio.h>
+
 #include "signals.h"
-#include <cstring>
-#include <stdlib.h>
 
 using namespace std;
 using namespace pugi;

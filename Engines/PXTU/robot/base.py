@@ -95,7 +95,7 @@ class payload_package():
                 self.payload += "'" + file_name + ".csv\'"
             else:
                 self.payload += "'" + file_name + "'"
-        self.payload = '{' + self.payload + '}'
+        self.payload = '{' + self.payload + '}\0'
         # {1,[23,44,56,22],100,'Recording_1234.csv'}
 
     @property

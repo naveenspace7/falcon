@@ -19,5 +19,13 @@
 #include <signal.h>
 #include <sstream>
 #include <fstream>
+#include <thread>
+
+using namespace std;
+
+bool recording = false;
+bool init_done = false;
+string received_str = "";
+vector<string> payload;
 
 #endif

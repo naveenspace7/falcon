@@ -13,8 +13,9 @@ class socket_config(object):
 
     _client_sock = 0
     _addr = 0
+    _addr_dcap = 0
     
-    def __init__(self,ip_addr,dst_port):
+    def __init__(self,ip_addr,dst_port,dst_port_dcap):
         
         #socket members
         socket_config._client_sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM) #creating a socket for UDP
@@ -24,9 +25,40 @@ class socket_config(object):
         host = ip_addr; port = dst_port #For external communication TODO: Make this XML readable
         socket_config._addr = (host,port)
 
+        port = dst_port_dcap #For external communication TODO: Make this XML readable
+        socket_config._addr_dcap = (host,port)
+
     def __del__(self):
 
         socket_config._client_sock.close()
+
+##class socket_config(object):
+##
+##    _client_sock = 0
+##    _addr = 0
+##    _addr_dcap = 0
+##        
+##    def __init__(self,ip_addr,dst_port,dst_port_dcap):
+##        
+##        #socket members
+##        socket_config._client_sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM) #creating a socket for UDP
+##        #socket_config._client_sock_DCap = socket.socket(socket.AF_INET,socket.SOCK_DGRAM) #creating a socket for UDP DCap
+##        
+##        socket_config._client_sock.setblocking(0) #making non-blocking
+##        #socket_config._client_sock_DCap.setblocking(0) #making non-blocking
+##        
+##        socket_config._client_sock.settimeout(5) #setting the timeout to 5 secs
+##        #socket_config._client_sock_DCap.settimeout(5) #setting the timeout to 5 secs
+##
+##        host = ip_addr; port = dst_port #For external communication TODO: Make this XML readable
+##        socket_config._addr = (host,port)
+##
+##        port = dst_port_dcap #For external communication TODO: Make this XML readable
+##        socket_config._addr_dcap = (host,port)
+##
+##    def __del__(self):
+##
+##        socket_config._client_sock.close()        
         
 
 class signal(socket_config):    

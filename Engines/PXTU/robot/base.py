@@ -4,6 +4,7 @@ TODO: Read the IP address and port number from config file.
 ### IMPORTS ###
 import modules, time
 import signal_class
+from signal_class import socket_config
 
 class Base(object):
 
@@ -11,7 +12,7 @@ class Base(object):
         
         print "Initializing Base..."
 
-        self.__pxtu_sock = signal_class.socket_config("192.168.0.102",2017) # TODO: Read this from config file
+        #self.__pxtu_sock = signal_class.socket_config("192.168.0.108",2017,2018) # TODO: Read this from config file
         self.ir = modules.IR()
         self.speed = modules.Speed()
         self.power = modules.Power()
@@ -21,9 +22,13 @@ class Base(object):
 
         print "Done initializing Base"
 
-class Record(object):
+class Record(socket_config):
+#class Record(object):
     
     recording = False
+
+    def __init__(self):
+        pass
     
     def start(self, sig_list, rate = 100, file_name = None):
         '''
@@ -47,6 +52,7 @@ class Record(object):
             Record.recording = True
             print self.element
             # send self.element
+            socket_config._client_sock.sendto(self.element , socket_config._addr_dcap)
 
         else:
             print "Warning: Recorder is already running"
@@ -63,6 +69,7 @@ class Record(object):
             Record.recording = False
             print self.element
             # send self.element
+            socket_config._client_sock.sendto(self.element , socket_config._addr_dcap)
             
         else:
             print "Warning: Recorder is stopped already"

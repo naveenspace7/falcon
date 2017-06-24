@@ -36,6 +36,7 @@ class signal(socket_config):
         #signal members
         self.name = name
         self.__address = address
+        self._address = address
         self.__partition = partition
         self.__value = 0
         self.__desc = desc

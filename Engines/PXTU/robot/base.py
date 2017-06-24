@@ -17,6 +17,7 @@ class Base(object):
         self.power = modules.Power()
         self.usr = modules.USR()
         self.angle = modules.Angle()
-        self.config = modules.Config()        
+        self.config = modules.Config()
+        self.record = modules.record()
 
         print "Done initializing Base"

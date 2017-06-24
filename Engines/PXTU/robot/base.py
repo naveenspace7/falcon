@@ -92,11 +92,11 @@ class payload_package():
             self.payload += '],'
             self.payload += str(rate) + ','
             if '.csv' not in file_name:
-                self.payload += file_name + '.csv'
+                self.payload += "'" + file_name + ".csv\'"
             else:
-                self.payload += file_name
+                self.payload += "'" + file_name + "'"
         self.payload = '{' + self.payload + '}'
-        # {1,[23,44,56,22],100,Recording_1234.csv}
+        # {1,[23,44,56,22],100,'Recording_1234.csv'}
 
     @property
     def payload(self):

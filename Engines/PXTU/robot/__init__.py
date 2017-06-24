@@ -1,7 +1,10 @@
-from base import Base
-
-base = Base()
+from base import Base, Record
+#from base import Record
 
 # Use base equivalent objects here
+base = Base()
+record = Record()
 
-del Base # To eliminate stray references
+# To eliminate stray references
+del Base 
+del Record

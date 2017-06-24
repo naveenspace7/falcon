@@ -40,3 +40,33 @@ void signals::set(int value)
 {
 	*((int*)base+address) = value;
 }
+
+// Populate the map with values read from the XML file
+void signals::make_map(map<int,string>& sig_map, map<string,int>& sig_map2)
+{
+	/*
+	Create something like this:
+	sig_map[21] = "usr_right";
+	sig_map[22] = "usr_left";	
+	sig_map[52] = "ir_rear";*/
+
+	int address;
+	string name;
+
+	// Open XML file
+	xml_document doc;
+	xml_parse_result result = doc.load_file("/home/pi/Falcon/Common/Signals/signals.xml");
+
+	if(!result)
+		cout << "Error reading the XML signals file" << endl;
+
+	xml_node signals = doc.child("robot").child("signals");
+	for(xml_node signal = signals.first_child(); signal; signal = signal.next_sibling())
+	{
+		// Operate on signal
+		address = atoi(signal.attribute("address").value());
+		name = signal.attribute("name").value();
+		sig_map[address] = name;
+		sig_map2[name] = address;
+	}
+}

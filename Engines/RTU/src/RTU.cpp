@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 	map<int,string> sig_map; // address - name
 	map<string, int> name_addr; // name - address
 
-	make_map(sig_map, name_addr);
+	signals::make_map(sig_map, name_addr);
 
 	thread TCPthread(background_monitor, cref(sig_map));
 
@@ -114,34 +114,4 @@ int obtain_address(int rec_cmd)
 	int rec_addr = ((rec_cmd & ADR) >> ADDOFF); //Obtaining the Address from the Packet received
 	cout << "Address: " << rec_addr << endl;
 	return rec_addr;
-}
-
-// Populate the map with values read from the XML file
-void make_map(map<int,string>& sig_map, map<string,int>& sig_map2)
-{
-	/*
-	Create something like this:
-	sig_map[21] = "usr_right";
-	sig_map[22] = "usr_left";	
-	sig_map[52] = "ir_rear";*/
-
-	int address;
-	string name;
-
-	// Open XML file
-	xml_document doc;
-	xml_parse_result result = doc.load_file("signals.xml");
-
-	if(!result)
-		cout << "Error reading the XML signals file" << endl;
-
-	xml_node signals = doc.child("robot").child("signals");
-	for(xml_node signal = signals.first_child(); signal; signal = signal.next_sibling())
-	{
-		// Operate on signal
-		address = atoi(signal.attribute("address").value());
-		name = signal.attribute("name").value();
-		sig_map[address] = name;
-		sig_map2[name] = address;
-	}
 }

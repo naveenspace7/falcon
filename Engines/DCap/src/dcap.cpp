@@ -1,17 +1,20 @@
-
 #include "dcap.h"
 
 using namespace std;
 
-
-
 int main()
 {
+	std::map<int,std::string> adr_name; // address - name
+	std::map<std::string, int> name_adr; // name - address
+
+	//void make_map(std::map<int,std::string>&, std::map<std::string,int>&);
+	signals::make_map(adr_name, name_adr);
 
 	int time_s = 1 * 1000000;
 	int* base = get_base();
 
 	int counter = 0;
+	cout << "sig_map:" << adr_name[3] << endl; // debug
 
 	ofstream outfile;
 	outfile.open("note.csv");

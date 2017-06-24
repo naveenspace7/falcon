@@ -20,6 +20,7 @@
 #include "engineFrame.h"
 #include "pugixml.hpp"
 #include <thread>
+#include "signals.h"
 
 #define PORT 2017
 #define SHSIZE 400
@@ -30,7 +31,6 @@
 #define ADDOFF 3 //Address value Offset
 
 int get_size(char*);
-void make_map(std::map<int,std::string>&, std::map<std::string,int>&);
 int obtain_address(int);
 
 #endif

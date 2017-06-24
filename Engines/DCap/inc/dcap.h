@@ -20,6 +20,11 @@
 #include <sstream>
 #include <fstream>
 #include <thread>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+#define PORT 2018
 
 using namespace std;
 

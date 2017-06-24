@@ -60,6 +60,7 @@ int thread_function()
 		if(recording == true && init_done == false)
 		{
 			sample_time = 1000/stoi(payload.at(2)); // Get the rate in MS from frequency
+			cout << "Sample_time" << endl;
 			outfile.open(payload[3]); // Opening the file here with the name received in the payload
 			file_open = true;
 			address = recover(payload.at(1));
@@ -91,14 +92,12 @@ int thread_function()
 				ostringstream row;
 				row << counter*sample_time << ','; // Timestamp
 				for(int each_addr : address)
-					row << *(base+each_addr) << ",";				
+					row << *(base+each_addr) << ",";
 				row << '\n';
 				//cout << row.str(); // Debug
 				outfile << row.str();
 				counter++;
-				usleep(sample_time); // TODO: read this from the payload
-				if(counter == 5)
-					break;
+				usleep(sample_time*1000); // TODO: read this from the payload				
 			}
 		}
 		else
@@ -119,18 +118,47 @@ int thread_function()
 int main()
 {
 	thread FileThread(thread_function);
+	string received_string = "";
 
-	string recvd_str = "{1,[31,32,33,1,5,6],100,'temp.csv'}";
-	payload = decode_string(recvd_str);
+	//+++ Start of Socket config code +++
+	struct sockaddr_in si_me, si_other;
+	int s,i, recv_len;
+	socklen_t slen = sizeof(si_other);
+	char buff[1024];
 	
-	//cout << payload.at(0) << endl; // Debug
-	if(payload.at(0) == "1")
-		recording = true;
-	else
-		recording = false;
+	if((s=socket(AF_INET,SOCK_DGRAM,0))==-1) //Creating socket
+		return -1;
+	memset((char *)&si_me, 0, sizeof(si_me));
+	si_me.sin_family = AF_INET;
+	si_me.sin_port = htons(PORT);
+	si_me.sin_addr.s_addr = htonl(INADDR_ANY);
+	
+	if(bind(s,(struct sockaddr*)&si_me, sizeof(si_me))==-1) //Binding the IP address and the socket
+		return -1;
+	//--- End of Socket config code ---
 
-	//while(1);
-	usleep(1000000);
+
+	while(1)
+	{
+		cout << "***** DCAP Engine *****" << endl;
+		cout << "Waiting for DCap client..." << endl;
+		if((recv_len=recvfrom(s,buff,sizeof(buff),0,(struct sockaddr*)&si_other,&slen))==-1)
+			return -1;	
+
+		cout << "Request Received : " << buff << endl;
+		received_string = buff;
+		payload = decode_string(received_string);
+
+		//cout << payload.at(0) << endl; // Debug
+		if(payload.at(0) == "1")
+			recording = true;
+		else
+			recording = false;
+	}
 	
+		
+	//string received_string = "{1,[31,32,33,1,5,6],100,'temp.csv'}";
+	//payload = decode_string(received_string);
+		
 	return 0;
 }

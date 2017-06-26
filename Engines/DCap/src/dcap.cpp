@@ -67,7 +67,7 @@ int thread_function()
 			{
 				{
 					ostringstream row;
-					row << "Timestamp,";
+					row << "Timestamp (ms),";
 					outfile << row.str();
 					//cout << row.str(); // Debug
 				}

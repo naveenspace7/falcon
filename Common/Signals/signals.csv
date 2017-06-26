@@ -11,6 +11,7 @@ engine_8,8,engine,0,0,int32,input output,PID and status of eng8
 engine_9,9,engine,0,0,int32,input output,PID and status of eng9
 engine_10,10,engine,0,0,int32,input output,PID and status of eng10
 timestamp,11,config,0,0,int32,input output,timestamp for data between engine and arduino
+mode,20,config,0,0,int32,output,Mode the controls the autonomy
 usr_right,21,usr,0,0,int32,input,Set of ultrasonic sensor readings on the right
 usr_left,22,usr,0,0,int32,input,Set of ultrasonic sensor reading on the left
 usr_front,23,usr,0,0,int32,input,Set of ultrasonic sensor readings on the front
@@ -24,4 +25,4 @@ ir_front,51,ir,0,0,discrete,input,Set of ir sensor readings on the front
 ir_rear,52,ir,0,0,discrete,input,Set of ir sensor readings on the rear
 angle,61,angle,0,360,int32,input,The angle reading from the magnetometer.
 angle_cmd,62,angle,0,360,int32,output,Angle commanded by the calculation engine.
-mode,20,config,0,0,int32,output,Mode the controls the autonomy
+exit,70,util,0,1,int32,input output,Turn off the engine by making this to 67

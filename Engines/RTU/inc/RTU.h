@@ -25,7 +25,9 @@
 #define PORT 2017
 #define SHSIZE 400
 
-#define VAL 2095104 //Mask for value
+//#define VAL 268433408 //Mask for value
+#define VAL 67106816 //Mask for value
+
 #define ADR 2040 //Mask for address
 #define VALOFF 11 //New write value Offset
 #define ADDOFF 3 //Address value Offset

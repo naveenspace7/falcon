@@ -1,15 +1,15 @@
 Name,Address,Parent,Min,Max,Data-type,Input/Output,Comments
 lock,0,config,0,0,int32,input output,Used to lock the SHM
-engine_1,1,config,0,0,int32,input output,PID and status of eng1
-engine_2,2,config,0,0,int32,input output,PID and status of eng2
-engine_3,3,config,0,0,int32,input output,PID and status of eng3
-engine_4,4,config,0,0,int32,input output,PID and status of eng4
-engine_5,5,config,0,0,int32,input output,PID and status of eng5
-engine_6,6,config,0,0,int32,input output,PID and status of eng6
-engine_7,7,config,0,0,int32,input output,PID and status of eng7
-engine_8,8,config,0,0,int32,input output,PID and status of eng8
-engine_9,9,config,0,0,int32,input output,PID and status of eng9
-engine_10,10,config,0,0,int32,input output,PID and status of eng10
+arduino,1,engine,0,0,int32,input output,PID and status of eng1
+engine_2,2,engine,0,0,int32,input output,PID and status of eng2
+engine_3,3,engine,0,0,int32,input output,PID and status of eng3
+engine_4,4,engine,0,0,int32,input output,PID and status of eng4
+engine_5,5,engine,0,0,int32,input output,PID and status of eng5
+engine_6,6,engine,0,0,int32,input output,PID and status of eng6
+engine_7,7,engine,0,0,int32,input output,PID and status of eng7
+engine_8,8,engine,0,0,int32,input output,PID and status of eng8
+engine_9,9,engine,0,0,int32,input output,PID and status of eng9
+engine_10,10,engine,0,0,int32,input output,PID and status of eng10
 timestamp,11,config,0,0,int32,input output,timestamp for data between engine and arduino
 usr_right,21,usr,0,0,int32,input,Set of ultrasonic sensor readings on the right
 usr_left,22,usr,0,0,int32,input,Set of ultrasonic sensor reading on the left
@@ -24,4 +24,4 @@ ir_front,51,ir,0,0,discrete,input,Set of ir sensor readings on the front
 ir_rear,52,ir,0,0,discrete,input,Set of ir sensor readings on the rear
 angle,61,angle,0,360,int32,input,The angle reading from the magnetometer.
 angle_cmd,62,angle,0,360,int32,output,Angle commanded by the calculation engine.
-mode,71,config,0,0,int32,output,Mode the controls the autonomy
+mode,20,config,0,0,int32,output,Mode the controls the autonomy

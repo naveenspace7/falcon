@@ -1,0 +1,20 @@
+#! /bin/bash
+
+ROOT_PATH=$HOME/Falcon
+ 
+if [ $* == *"lib"* ]
+then
+ CDir="Libraries"
+
+ rm $ROOT_PATH/Libraries/bin/* -rf
+	
+ test -d $ROOT_PATH/$CDir/build
+
+ if [ $? -eq 0 ]
+ then
+  cd $ROOT_PATH/$CDir && rm build -rf
+ fi
+
+ mkdir build && cd build && cmake .. && make
+
+fi

@@ -3,17 +3,28 @@
 using namespace std;
 using namespace pugi;
 
-void background_monitor(const map<int, string>& signal_map)
-{
-	vector<int> tcp_payload;
-
-	// Start doing the search here and send the TCP
-	// Make TCP connection here
-	// Send mainly the engines' running status
-}
-
 int main(int argc, char *argv[])
 {
+	pid_t pid, sid;
+	pid = fork();
+
+	if(pid < 0)
+		exit(EXIT_FAILURE);
+	if(pid > 0)
+		exit(EXIT_SUCCESS);
+	umask(0);	
+	sid = setsid();
+
+	if(sid < 0)
+		exit(EXIT_FAILURE);
+	if((chdir("/")) < 0)
+		exit(EXIT_FAILURE);
+	close(STDIN_FILENO);
+	close(STDOUT_FILENO);
+	close(STDERR_FILENO);
+
+	// Daemon code ends here and actual code start from here
+
 	int* shm;
 
 	// Signal address to signal name map
@@ -22,7 +33,7 @@ int main(int argc, char *argv[])
 
 	signals::make_map(sig_map, name_addr);
 
-	thread TCPthread(background_monitor, cref(sig_map));
+	//thread TCPthread(background_monitor, cref(sig_map));
 
 	//+++ Start of Socket config code +++
 	struct sockaddr_in si_me, si_other;
@@ -45,25 +56,25 @@ int main(int argc, char *argv[])
 
 	while(1)
 	{
-		cout << "************" << endl;
-		cout << "Waiting for client..." << endl;
+		//Deletecout << "************" << endl;
+		//Deletecout << "Waiting for client..." << endl;
 		// Blocking socket - receive
 		if((recv_len=recvfrom(s,buff,sizeof(buff),0,(struct sockaddr*)&si_other,&slen))==-1)
 			return -1;		
 
-		cout << "Request Received : " << buff << endl;
-		cout << "Data Decoded: " << endl;
+		cout << "Request: " << buff << endl;
+		//Deletecout << "Data Decoded: " << endl;
 
 		int rec_cmd = atoi(buff); // Converting received string to integer
 		int rec_addr = obtain_address(rec_cmd);
 		
-		cout << "Signal Name: " << sig_map[rec_addr] << endl;
+		cout << "Name-" << sig_map[rec_addr] << endl;
 
 		switch((int)rec_cmd & 7) //Checking the command bits
 		{
 			case 1: //Read command
 			{			
-				cout << "Command: Read"	<< endl;
+				cout << "Cmd-R"	<< endl;
 				int temp_val = *(shm+rec_addr); //Reading the value from the SHM
 				char temp_buff[10]; //Temp to convert the read value into string
 				sprintf(temp_buff,"%d\0",temp_val);	//Converting the int to string
@@ -74,7 +85,7 @@ int main(int argc, char *argv[])
 			}
 			case 2: // Write Command
 			{
-				cout << "Command: Write"	<< endl;
+				cout << "Cmd-W"	<< endl;
 				int temp_new_val = ((rec_cmd & VAL) >> VALOFF); //Obtaining the new value to be written from the payload
 				cout << "New value: " << temp_new_val << endl;
 				*(shm+rec_addr) = temp_new_val;	//writing the new value into SHM
@@ -86,9 +97,6 @@ int main(int argc, char *argv[])
 
 		cout << "\n" << endl;
 	}
-
-	if(TCPthread.joinable())
-		TCPthread.join();
 
  	return 0;
 }
@@ -112,6 +120,6 @@ int get_size(char *s)
 int obtain_address(int rec_cmd)
 {
 	int rec_addr = ((rec_cmd & ADR) >> ADDOFF); //Obtaining the Address from the Packet received
-	cout << "Address: " << rec_addr << endl;
+	//Deletecout << "Address: " << rec_addr << endl;
 	return rec_addr;
 }

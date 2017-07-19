@@ -2,7 +2,7 @@
 TODO: Read the IP address and port number from config file.
 '''
 ### IMPORTS ###
-import modules, time, sqlite3
+import modules, time, sqlite3, socket
 import signal_class
 from signal_class import socket_config, signal, engine_signal
 
@@ -48,12 +48,19 @@ class Record(socket_config):
                 # Recording_12345
             
             temp_element = payload_package(1, sig_list, rate, file_name)
-            self.element = temp_element.payload
-            Record.recording = True
+            self.element = temp_element.payload            
             print self.element
             # send self.element
             socket_config._client_sock.sendto(self.element , socket_config._addr_dcap)
-
+            # receive response here and only if is Done make the recording to true
+            try:
+                _data,_addr2 = socket_config._client_sock.recvfrom(1024) #receiving the address from the server
+                if _data == "Done": Record.recording = True
+                print "Success"
+                #print "Data received from the server: " + str(self.__data)
+            except socket.timeout:
+                print "Timeout!"
+                return None            
         else:
             print "Warning: Recorder is already running"
 
@@ -65,12 +72,18 @@ class Record(socket_config):
         '''
         if Record.recording != False:
             temp_element = payload_package(0)
-            self.element = temp_element.payload
-            Record.recording = False
+            self.element = temp_element.payload            
             print self.element
             # send self.element
             socket_config._client_sock.sendto(self.element , socket_config._addr_dcap)
-            
+            try:
+                _data,_addr2 = socket_config._client_sock.recvfrom(1024) #receiving the address from the server
+                if _data == "Done": Record.recording = False
+                print "Success"
+                #print "Data received from the server: " + str(self.__data)
+            except socket.timeout:
+                print "Timeout!"
+                return None            
         else:
             print "Warning: Recorder is stopped already"
 

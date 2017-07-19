@@ -154,6 +154,9 @@ int main()
 			recording = true;
 		else
 			recording = false;
+
+		if(sendto(s,"Done",4,0,(struct sockaddr*)&si_other,slen)==-1) //Sending response back to the Host
+			return -1;
 	}
 	
 		

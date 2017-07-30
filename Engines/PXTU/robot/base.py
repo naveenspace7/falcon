@@ -98,17 +98,17 @@ class payload_package():
         self.payload += str(self.cmd)
         if cmd != 0:
             self.file_name = file_name
-            self.payload += ',['
+            self.payload += ';['
             for each_signal in sig_list:
                 self.payload += str(each_signal._address) + ','
             self.payload = self.payload[:-1]
-            self.payload += '],'
-            self.payload += str(rate) + ','
+            self.payload += '];'
+            self.payload += str(rate) + ';'
             if '.csv' not in file_name:
-                self.payload += "'" + file_name + ".csv\'"
+                self.payload += "" + file_name + ".csv"
             else:
                 self.payload += "'" + file_name + "'"
-        self.payload = '{' + self.payload + '}\0'
+        self.payload = '{' + self.payload + '}\0'        
         # {1,[23,44,56,22],100,'Recording_1234.csv'}
 
     @property

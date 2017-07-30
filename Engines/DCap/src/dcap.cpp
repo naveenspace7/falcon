@@ -2,33 +2,35 @@
 
 using namespace std;
 
-vector<string> decode_string(string inp)
+// Trims the first and trailing braces in a string
+string trim_string(string inp)
 {
-	char temp[1024];
-	vector<string> buffer;
-	strcpy(temp,inp.c_str());
-	pair<int,int> position;
-
-	// TODO: Make this efficient
-	ostringstream ost;
-	ost << temp[1];
-	buffer.push_back(ost.str());
-	
-	position = make_pair(inp.find('[') + 1, inp.find(']') - inp.find('[') - 1);
-	buffer.push_back(inp.substr(position.first,position.second));
-	
-	position = make_pair(inp.find("],") + 2, inp.find(",\'") - inp.find("],") - 2);
-	buffer.push_back(inp.substr(position.first,position.second));
-	
-	position = make_pair(inp.find(",\'") + 2, inp.find("\'}") - inp.find(",\'") - 2);
-	buffer.push_back(inp.substr(position.first,position.second));
-	
-	return buffer;
+	int len = inp.length();
+	string trimmed_string = inp.substr(1,len-2);
+	return trimmed_string;
 }
 
-// Converts string into vector
-vector<int> recover(string inp)
+// Takes the request input string and makes it into vector of string
+vector<string> decode_string(string inp)
 {
+	string trimmed_string(trim_string(inp));
+	cout << trimmed_string << endl;
+	vector<string> params;
+	
+	for (auto buff = strtok(&trimmed_string[0], ";"); buff != NULL; buff = strtok(NULL, ";"))
+		params.push_back(buff);
+
+	//Debug
+	for (auto i : params)
+		cout << i << endl;
+
+	return params;
+}
+
+// Converts addresses string into addresses vector
+vector<int> recover(string inp)
+{	
+	inp = trim_string(inp);
 	vector<int> temp;
 	stringstream ss(inp);
 	int i;
@@ -59,8 +61,7 @@ int thread_function()
 	{
 		if(recording == true && init_done == false)
 		{
-			sample_time = 1000/stoi(payload.at(2)); // Get the rate in MS from frequency
-			cout << "Sample_time" << endl;
+			sample_time = 1000/stoi(payload.at(2)); // Get the rate in MS from frequency			
 			outfile.open(payload[3]); // Opening the file here with the name received in the payload
 			file_open = true;
 			address = recover(payload.at(1));
@@ -160,7 +161,7 @@ int main()
 	}
 	
 		
-	//string received_string = "{1,[31,32,33,1,5,6],100,'temp.csv'}";
+	//string received_string = "{1;[31,32,33,1,5,6];100;'temp.csv'}";
 	//payload = decode_string(received_string);
 		
 	return 0;

@@ -9,6 +9,7 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <time.h>
 #include <stdio.h>
 #include <iostream>
@@ -21,6 +22,7 @@
 #include "pugixml.hpp"
 #include <thread>
 #include "signals.h"
+#include <syslog.h>
 
 #define PORT 2017
 #define SHSIZE 400

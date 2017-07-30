@@ -5,6 +5,8 @@ using namespace pugi;
 
 int main(int argc, char *argv[])
 {
+	//setlogmask(LOG_UPTO(LOG_NOTICE));
+	openlog("RTU", LOG_CONS | LOG_NDELAY | LOG_PERROR | LOG_PID, LOG_USER);
 	pid_t pid, sid;
 	pid = fork();
 
@@ -22,6 +24,8 @@ int main(int argc, char *argv[])
 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
+
+	syslog(LOG_INFO, "Starting RTU Engine");
 
 	// Daemon code ends here and actual code start from here
 
@@ -55,36 +59,35 @@ int main(int argc, char *argv[])
 	shm = get_base();
 
 	while(1)
-	{
-		//Deletecout << "************" << endl;
-		//Deletecout << "Waiting for client..." << endl;
+	{		
 		// Blocking socket - receive
 		if((recv_len=recvfrom(s,buff,sizeof(buff),0,(struct sockaddr*)&si_other,&slen))==-1)
 			return -1;		
 
-		cout << "Request: " << buff << endl;
+		syslog(LOG_INFO, "Request: %s", buff);
+		//cout << "Req: " << buff << endl;
 		//Deletecout << "Data Decoded: " << endl;
 
 		int rec_cmd = atoi(buff); // Converting received string to integer
-		int rec_addr = obtain_address(rec_cmd);
-		
-		cout << "Name-" << sig_map[rec_addr] << endl;
+		int rec_addr = obtain_address(rec_cmd);		
 
 		switch((int)rec_cmd & 7) //Checking the command bits
 		{
 			case 1: //Read command
-			{			
+			{
+				cout << "Name-" << sig_map[rec_addr] << endl;
 				cout << "Cmd-R"	<< endl;
 				int temp_val = *(shm+rec_addr); //Reading the value from the SHM
 				char temp_buff[10]; //Temp to convert the read value into string
 				sprintf(temp_buff,"%d\0",temp_val);	//Converting the int to string
-				cout << "Fetched " << temp_buff << " from SHM" << endl;		
+				//cout << "Fetched " << temp_buff << " from SHM" << endl; // DEBUG
 				if(sendto(s,temp_buff,get_size(temp_buff),0,(struct sockaddr*)&si_other,slen)==-1) //Sending the value back to the Host
 					return -1;		
 				break;
 			}
 			case 2: // Write Command
 			{
+				cout << "Name-" << sig_map[rec_addr] << endl;
 				cout << "Cmd-W"	<< endl;
 				int temp_new_val = ((rec_cmd & VAL) >> VALOFF); //Obtaining the new value to be written from the payload
 				cout << "New value: " << temp_new_val << endl;
@@ -98,6 +101,7 @@ int main(int argc, char *argv[])
 		cout << "\n" << endl;
 	}
 
+	closelog();
  	return 0;
 }
 

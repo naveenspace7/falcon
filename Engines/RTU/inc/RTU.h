@@ -28,7 +28,7 @@
 #define SHSIZE 400
 
 //#define VAL 268433408 //Mask for value
-#define VAL 67106816 //Mask for value
+#define VAL 134215680 //Mask for value 
 
 #define ADR 2040 //Mask for address
 #define VALOFF 11 //New write value Offset

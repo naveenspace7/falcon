@@ -1,4 +1,3 @@
-
 #include "signals.h"
 
 using namespace std;
@@ -36,9 +35,18 @@ int signals::get()
 	return value;
 }
 
+// Set will depend on the value of the lock
 void signals::set(int value)
 {
-	*((int*)base+address) = value;
+	// Checks if the LOCK variable is 0 and only then it can write
+	if(*(int*)base == 0)
+		*((int*)base+address) = value;
+}
+
+// Force will bypass the lock checking
+void signals::force(int value)
+{
+	*((int*)base + address) = value;
 }
 
 // Populate the map with values read from the XML file

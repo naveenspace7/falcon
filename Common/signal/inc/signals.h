@@ -19,6 +19,7 @@ public:
 	signals(std::string,int*&);
 	void set(int);
 	int get();
+	void force(int);
 	static void make_map(std::map<int,std::string>&, std::map<std::string,int>&);
 };
 

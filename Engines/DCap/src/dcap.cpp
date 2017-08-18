@@ -62,7 +62,7 @@ int thread_function()
 		if(recording == true && init_done == false)
 		{
 			sample_time = 1000/stoi(payload.at(2)); // Get the rate in MS from frequency			
-			outfile.open(payload[3]); // Opening the file here with the name received in the payload
+			outfile.open("/home/pi/Falcon/" + payload[3]); // Opening the file here with the name received in the payload
 			file_open = true;
 			address = recover(payload.at(1));
 			{
@@ -118,6 +118,24 @@ int thread_function()
 
 int main()
 {
+	pid_t pid, sid;
+	pid = fork();
+
+	if(pid < 0)
+		exit(EXIT_FAILURE);
+	if(pid > 0)
+		exit(EXIT_SUCCESS);
+	umask(0);	
+	sid = setsid();
+
+	if(sid < 0)
+		exit(EXIT_FAILURE);
+	if((chdir("/")) < 0)
+		exit(EXIT_FAILURE);
+	close(STDIN_FILENO);
+	close(STDOUT_FILENO);
+	close(STDERR_FILENO);
+	
 	thread FileThread(thread_function);
 	string received_string = "";
 

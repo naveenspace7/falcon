@@ -118,6 +118,7 @@ int thread_function()
 
 int main()
 {
+	#if DEBUG == 0
 	pid_t pid, sid;
 	pid = fork();
 
@@ -135,6 +136,7 @@ int main()
 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
+	#endif
 	
 	thread FileThread(thread_function);
 	string received_string = "";

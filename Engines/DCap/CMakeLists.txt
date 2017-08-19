@@ -11,6 +11,7 @@ ENDIF(WIN32)
 
 include_directories(${ROOT_PATH}/Common/EngineFrame/inc ${ROOT_PATH}/Common/signal/inc ${ROOT_PATH}/Common/Utils/pugixml/inc ${ROOT_PATH}/Engines/DCap/inc)
 
+add_definitions(-DDEBUG=0)
 add_compile_options(-std=c++11)
 
 IF(WIN32)

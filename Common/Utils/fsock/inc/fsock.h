@@ -31,7 +31,7 @@ public:
 
 	int sock_send(string);
 	
-	int sock_recv();
+	string sock_recv();
 	
 	// Takes the input of char array and return the valid length
 	int get_size(const char *);	

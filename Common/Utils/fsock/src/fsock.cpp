@@ -23,13 +23,12 @@ int make_fsock::sock_send(string nv)
 	return 0;
 }
 
-int make_fsock::sock_recv()
+string make_fsock::sock_recv()
 {
 	// Blocking socket - receive
 	if((recv_len=recvfrom(s,buff,sizeof(buff),0,(struct sockaddr*)&si_other,&slen))==-1)
-		return -1;
-	cout << buff << endl;
-	return 0;
+		cout << "ERROR" << endl;
+	return string(buff);
 }
 
 // Takes the input of char array and return the valid length

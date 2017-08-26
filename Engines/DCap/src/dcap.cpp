@@ -118,7 +118,7 @@ int thread_function()
 
 int main()
 {
-	#if DEBUG == 0
+	#if DEBUG==0
 	pid_t pid, sid;
 	pid = fork();
 
@@ -141,30 +141,15 @@ int main()
 	thread FileThread(thread_function);
 	string received_string = "";
 
-	//+++ Start of Socket config code +++
-	struct sockaddr_in si_me, si_other;
-	int s,i, recv_len;
-	socklen_t slen = sizeof(si_other);
-	char buff[1024];
-	
-	if((s=socket(AF_INET,SOCK_DGRAM,0))==-1) //Creating socket
-		return -1;
-	memset((char *)&si_me, 0, sizeof(si_me));
-	si_me.sin_family = AF_INET;
-	si_me.sin_port = htons(PORT);
-	si_me.sin_addr.s_addr = htonl(INADDR_ANY);
-	
-	if(bind(s,(struct sockaddr*)&si_me, sizeof(si_me))==-1) //Binding the IP address and the socket
-		return -1;
-	//--- End of Socket config code ---
-
-
 	while(1)
 	{
 		cout << "***** DCAP Engine *****" << endl;
-		cout << "Waiting for DCap client..." << endl;
-		if((recv_len=recvfrom(s,buff,sizeof(buff),0,(struct sockaddr*)&si_other,&slen))==-1)
-			return -1;	
+		cout << "Waiting for DCap client..." << endl;		
+
+		string buff(new_sock->sock_recv());
+		if (buff == "ERROR")
+			return -1;
+
 
 		cout << "Request Received : " << buff << endl;
 		received_string = buff;
@@ -176,8 +161,7 @@ int main()
 		else
 			recording = false;
 
-		if(sendto(s,"Done",4,0,(struct sockaddr*)&si_other,slen)==-1) //Sending response back to the Host
-			return -1;
+		new_sock->sock_send(string("Done"));
 	}
 	
 		

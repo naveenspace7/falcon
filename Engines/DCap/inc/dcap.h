@@ -1,5 +1,6 @@
 #ifndef DCAP_H
 #define DCAP_H
+
 #include <iostream>
 #include "engineFrame.h"
 #include "signals.h"
@@ -9,7 +10,6 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include <string.h>
-#include <termios.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
@@ -23,6 +23,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include "fsock.h"
+#include <syslog.h>
 
 #define PORT 2018
 
@@ -32,5 +34,7 @@ bool recording = false;
 bool init_done = false;
 string received_str = "";
 vector<string> payload;
+
+shared_ptr<make_fsock> new_sock = make_shared<make_fsock>(PORT);
 
 #endif

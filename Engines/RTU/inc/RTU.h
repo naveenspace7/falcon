@@ -22,7 +22,9 @@
 #include "pugixml.hpp"
 #include <thread>
 #include "signals.h"
+#include "fsock.h"
 #include <syslog.h>
+#include <memory>
 
 #define PORT 2017
 #define SHSIZE 400
@@ -34,7 +36,8 @@
 #define VALOFF 11 //New write value Offset
 #define ADDOFF 3 //Address value Offset
 
-int get_size(char*);
 int obtain_address(int);
+
+shared_ptr<make_fsock> new_sock = make_shared<make_fsock>(PORT);
 
 #endif

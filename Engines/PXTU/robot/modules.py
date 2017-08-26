@@ -14,7 +14,7 @@ class IR(object):
 
     def __init__(self):
 
-        print "Building IR symbols..."
+        print "Building IR symbols...",
         connection = sqlite3.connect(db_path)
         cursor = connection.execute("SELECT t1.Name, t1.Address, t1.Parent, t1.Description FROM signal AS t1 WHERE t1.parent = 'ir'")
         count = 0
@@ -28,7 +28,7 @@ class IR(object):
         if count == 0:
             print "Warning: No symbols found"
         else:
-            print str(count) + ' IR Symbols added successfully\n'
+            print str(count) + ' IR Symbols added successfully'
 
         connection.close()
 
@@ -37,7 +37,7 @@ class Speed(object):
 
     def __init__(self):
 
-        print "Building Speed symbols..."
+        print "Building Speed symbols...",
         connection = sqlite3.connect(db_path)
         cursor = connection.execute("SELECT * FROM signal WHERE signal.parent = 'speed'")
         count = 0
@@ -51,7 +51,7 @@ class Speed(object):
         if count == 0:
             print "Warning: No symbols found"
         else:
-            print str(count) + ' Speed Symbols added successfully\n'
+            print str(count) + ' Speed Symbols added successfully'
 
         connection.close()
 
@@ -60,7 +60,7 @@ class Power(object):
 
     def __init__(self):
 
-        print "Building Wheel Power symbols..."
+        print "Building Wheel Power symbols...",
         connection = sqlite3.connect(db_path)
         cursor = connection.execute("SELECT t1.Name, t1.Address, t1.Parent, t1.Description FROM signal AS t1 WHERE t1.parent = 'power'")
         count = 0
@@ -74,14 +74,14 @@ class Power(object):
         if count == 0:
             print "Warning: No symbols found"
         else:
-            print str(count) + ' Power Symbols added successfully\n'
+            print str(count) + ' Power Symbols added successfully'
 
         connection.close()
 
 class USR(object):
 
     def __init__(self):
-        print "Building USR symbols..."
+        print "Building USR symbols...",
         connection = sqlite3.connect(db_path)
         cursor = connection.execute("SELECT t1.Name, t1.Address, t1.Parent, t1.Description FROM signal AS t1 WHERE t1.parent = 'usr'")
         count = 0
@@ -95,7 +95,7 @@ class USR(object):
         if count == 0:
             print "Warning: No symbols found"
         else:
-            print str(count) + ' USR Symbols added successfully\n'
+            print str(count) + ' USR Symbols added successfully'
 
         connection.close()
 
@@ -103,7 +103,7 @@ class Config(object):
 
     def __init__(self):
 
-        print "Building CONFIG symbols..."
+        print "Building CONFIG symbols...",
 
         connection = sqlite3.connect(db_path)
         cursor = connection.execute("SELECT t1.Name, t1.Address, t1.Parent, t1.Description FROM signal AS t1 WHERE t1.parent = 'config'")
@@ -118,7 +118,7 @@ class Config(object):
         if count == 0:
             print "Warning: No symbols found"
         else:
-            print str(count) + ' Config Symbols added successfully\n'
+            print str(count) + ' Config Symbols added successfully'
 
         connection.close()
 
@@ -126,7 +126,7 @@ class Angle(object):
 
     def __init__(self):
         
-        print "Building Angle symbols..."
+        print "Building Angle symbols...",
         connection = sqlite3.connect(db_path)
         cursor = connection.execute("SELECT t1.Name, t1.Address, t1.Parent, t1.Description FROM signal AS t1 WHERE t1.parent = 'angle'")
         count = 0
@@ -140,6 +140,6 @@ class Angle(object):
         if count == 0:
             print "Warning: No symbols found"
         else:
-            print str(count) + ' Angle Symbols added successfully\n'
+            print str(count) + ' Angle Symbols added successfully'
 
         connection.close()

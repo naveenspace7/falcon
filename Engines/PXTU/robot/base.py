@@ -119,7 +119,7 @@ class Engines(object):
 
     def __init__(self):
 
-        print "Building Engine symbols..."
+        print "Building Engine symbols...",
         connection = sqlite3.connect(modules.db_path)
         cursor = connection.execute("SELECT t1.Name, t1.Address, t1.Parent, t1.Description FROM signal AS t1 WHERE t1.parent = 'engine'")
         count = 0

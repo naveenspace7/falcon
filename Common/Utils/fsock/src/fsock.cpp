@@ -35,7 +35,7 @@ string make_fsock::sock_recv()
 int make_fsock::get_size(const char *s)
 {
 	int count(0);
-	for(int i=0; i<=10; i++)
+	for(int i=0; i<=12000; i++)
 	{
 		if(s[i] != '\0')
 			count ++;

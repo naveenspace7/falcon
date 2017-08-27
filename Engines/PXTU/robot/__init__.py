@@ -1,4 +1,4 @@
-from base import Base, Record, Engines
+from base import Base, Record, Engines, Signals
 
 import xml.etree.ElementTree as ET
 

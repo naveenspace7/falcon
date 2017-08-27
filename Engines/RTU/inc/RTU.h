@@ -25,6 +25,9 @@
 #include "fsock.h"
 #include <syslog.h>
 #include <memory>
+#include <sstream>
+#include <string>
+#include <mutex>
 
 #define PORT 2017
 #define SHSIZE 400
@@ -37,7 +40,20 @@
 #define ADDOFF 3 //Address value Offset
 
 int obtain_address(int);
+string trim_string(string);
+vector<pair<int,int>> decode(string);
+void perform_action(pair<int, int>);
 
 shared_ptr<make_fsock> new_sock = make_shared<make_fsock>(PORT);
+
+map<int, string> sig_map; // address - name
+map<string, int> name_addr; // name - address
+
+int* shm;
+
+mutex mx;
+bool read_flag = false;
+vector<string> read_values;
+
 
 #endif

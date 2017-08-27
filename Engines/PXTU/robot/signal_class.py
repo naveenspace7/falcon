@@ -73,8 +73,7 @@ class signal(socket_config):
         '''
 
         print "Writing " + str(new_value) + " to " + self.name + '...'
-        payload = self.construct_payload(2,new_value)
-
+        payload = '{' + self.construct_payload(2,new_value) + '}\0'
         send = socket_config._client_sock.sendto(payload , socket_config._addr)
 
         try:
@@ -101,7 +100,7 @@ class signal(socket_config):
 
         command = str(command)
         
-        return command+'\0'
+        return command
 
     @property
     def desc(self):

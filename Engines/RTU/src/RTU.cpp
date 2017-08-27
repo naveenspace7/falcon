@@ -3,11 +3,74 @@
 using namespace std;
 using namespace pugi;
 
+// Removes the trailing and preceding braces
+string trim_string(string inp)
+{
+	int len = inp.length();
+	string trimmed_string = inp.substr(1, len - 2);
+	return trimmed_string;
+}
+
+/*input: "{234,456,678}"
+output: vector[234,456,678]*/
+vector<pair<int,int>> decode(string payload_str)
+{	
+	istringstream str_buff(trim_string(payload_str));
+	vector<pair<int,int>> payload_pair; // first: element_no, second: request
+	int count = 0; // element_no
+	for (string each; getline(str_buff, each, ','); payload_pair.push_back(make_pair(count++,stoi(each))));
+	return payload_pair;
+}
+
+// Actual code for handling the requests: will be a thread
+void perform_action(pair<int, int> payload_pair)
+{
+	int payload_pointer = payload_pair.first;
+	int command = payload_pair.second;
+	int rec_addr = obtain_address(command);	
+	
+	mx.lock();
+	switch ((int)command & 7) // Checking the command bits
+	{
+		case 1: //Read command
+		{			
+			read_flag = true;
+			cout << "Name-" << sig_map[rec_addr] << endl;
+			cout << "Cmd-R" << endl;
+			int temp_val = *(shm + rec_addr); // Reading the value from the SHM
+			read_values[payload_pointer] = to_string(temp_val); // Put it into the right place		
+			break;
+		}
+
+		case 2: // Write Command
+		{
+			read_flag = false;
+			cout << "Name-" << sig_map[rec_addr] << endl;
+			cout << "Cmd-W" << endl;
+			int temp_new_val = ((command & VAL) >> VALOFF); //Obtaining the new value to be written from the payload
+			cout << "New value: " << temp_new_val << endl;
+			*(shm + rec_addr) = temp_new_val;	//writing the new value into SHM
+			break;
+		}
+	}
+	mx.unlock();
+}
+
+// Pack the read values into a ready to be sent form
+string pack_read_payload()
+{
+	string return_str = "{";
+	for(auto& each_content: read_values)
+		return_str += each_content + ",";
+	return_str += "}";
+	return return_str;
+}
+
 int main(int argc, char *argv[])
 {
 	//setlogmask(LOG_UPTO(LOG_NOTICE));
-	#if DEBUG == 0
 	openlog("RTU", LOG_CONS | LOG_NDELAY | LOG_PERROR | LOG_PID, LOG_USER);
+	#if DEBUG == 0	// MAKE ME A DAEMON
 	pid_t pid, sid;
 	pid = fork();
 
@@ -30,59 +93,43 @@ int main(int argc, char *argv[])
 	//syslog(LOG_INFO, "Starting RTU Engine");
 	// Daemon code ends here and actual code start from here
 
-	int* shm = get_base();
-
-	// Signal address to signal name map
-	map<int,string> sig_map; // address - name
-	map<string, int> name_addr; // name - address
-
-	signals::make_map(sig_map, name_addr);
+	shm = get_base(); // Obtain the base address of the shared memory
+	
+	signals::make_map(sig_map, name_addr); // Signal address to signal name map
 
 	//thread TCPthread(background_monitor, cref(sig_map));	
+	string buff; // Buffer to store the incoming request
 
 	while(1)
 	{		
 		// Blocking socket - receive
-
-		string buff(new_sock->sock_recv());
+		buff = new_sock->sock_recv();
 		if (buff == "ERROR")
-			return -1;		
-
+			return -1;	
 		
-		//cout << "Req: " << buff << endl;
-		//Deletecout << "Data Decoded: " << endl;
+		vector<pair<int,int>> str_buff(decode(buff));
+		vector<thread> threads;
 
-		int rec_cmd = stoi(buff); // Converting received string to integer
-		int rec_addr = obtain_address(rec_cmd);		
+		read_values.resize(str_buff.size()); // Make the size to the received length
 
-		switch((int)rec_cmd & 7) //Checking the command bits
+		cout << "decoded:" << buff << endl;
+
+		for (vector<pair<int, int>>::iterator ele = str_buff.begin(); ele != str_buff.end(); ele++)
 		{
-			case 1: //Read command
-			{
-				cout << "Name-" << sig_map[rec_addr] << endl;
-				cout << "Cmd-R"	<< endl;
-				int temp_val = *(shm+rec_addr); //Reading the value from the SHM
-				char temp_buff[10]; //Temp to convert the read value into string
-				sprintf(temp_buff,"%d\0",temp_val);	//Converting the int to string
-				new_sock->sock_send(string(temp_buff));	
-				break;
-			}
-			case 2: // Write Command
-			{
-				cout << "Name-" << sig_map[rec_addr] << endl;
-				cout << "Cmd-W"	<< endl;
-				int temp_new_val = ((rec_cmd & VAL) >> VALOFF); //Obtaining the new value to be written from the payload
-				cout << "New value: " << temp_new_val << endl;
-				*(shm+rec_addr) = temp_new_val;	//writing the new value into SHM
-				new_sock->sock_send(string("Done"));	
-				break;
-			}
+			threads.push_back(thread(perform_action, *ele));
 		}
 
-		cout << "\n" << endl;
+		for (auto& each_thr : threads)
+		{
+			each_thr.join();
+		}
+	
+		if(read_flag)
+			new_sock->sock_send(pack_read_payload());						
+		else
+			new_sock->sock_send(string("WDone"));
 	}
 
-	closelog();
  	return 0;
 }
 

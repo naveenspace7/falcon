@@ -137,4 +137,71 @@ class Engines(object):
 
         connection.close()
 
-    #def stat
+class Signals(socket_config):
+
+    def __init__(self):
+        self.done = True
+        
+    @staticmethod
+    def read(signals_list):
+        payload = '{'
+        for each_signal in signals_list:
+            payload += Signals.construct_payload(each_signal, 1)+','
+        payload = payload[:-1] + '}\0'
+        print payload #debug
+        send = socket_config._client_sock.sendto(payload , socket_config._addr)
+
+        try:
+            _data,_addr2 = socket_config._client_sock.recvfrom(1024) #receiving the address from the server            
+            _data = _data[1:-2]            
+            _data = _data.split(',')
+            return_string = ""
+            for index, each_signal in enumerate(signals_list):
+                return_string += each_signal.name + ':' + _data[index] + ','
+            print return_string[:-1]
+            #print "Data received from the server: " + str(_data)  #make this proper                  
+        except socket.timeout:
+            print "Timeout!"
+            return None
+        
+    @staticmethod
+    def write(signals_list, values_list = None):
+        payload = '{'
+        if values_list == None:        
+            for each_signal_tuple in signals_list:
+                payload += Signals.construct_payload(each_signal_tuple[0], 2, each_signal_tuple[1])+','
+        else:
+            if len(signals_list) != len(values_list):
+                print "Lengths don't match"
+            else:
+                for ele_no in range(0,len(signals_list)):
+                    payload += Signals.construct_payload(signals_list[ele_no], 2, values_list[ele_no]) + ','
+        payload = payload[:-1] + '}\0'
+        print payload #debug
+        
+        send = socket_config._client_sock.sendto(payload , socket_config._addr)
+
+        try:
+            _data,_addr2 = socket_config._client_sock.recvfrom(1024) #receiving the address from the server
+            print "Data received from the server: " + str(_data)                    
+        except socket.timeout:
+            print "Timeout!"
+            return None
+
+    @staticmethod
+    def construct_payload(signal,cmd,value=0):
+        '''
+        Encodes the data.
+        Args: cmd = write(2) or read(1)
+              value = 0 (default) or value (to be written)
+        Return: data written into the signal
+        '''
+        if cmd == 1:
+            command = (signal._address << 3) | cmd
+        elif cmd == 2:
+            command = (value << 11) | (signal._address << 3) | cmd
+
+        command = str(command)
+        
+        return command
+        

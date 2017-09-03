@@ -13,7 +13,7 @@ def create_xml():
     signal = ET.SubElement(robot,"signals")
     config = ET.SubElement(robot,"config")
 
-    ET.SubElement(config,"param",name="ip_address",address="192.168.0.104")
+    ET.SubElement(config,"param",name="ip_address",address="192.168.0.143")
     ET.SubElement(config,"param",name="port",value="2017")
     ET.SubElement(config,"param",name="port_dcap",value="2018")
     ET.SubElement(config,"param",name="db_path",value="E:\\Falcon\\Common\\Signals\\signals_database.db")

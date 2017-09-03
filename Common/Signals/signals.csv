@@ -11,6 +11,7 @@ engine_8,8,engine,0,0,int32,input output,PID and status of eng8
 engine_9,9,engine,0,0,int32,input output,PID and status of eng9
 engine_10,10,engine,0,0,int32,input output,PID and status of eng10
 timestamp,11,config,0,0,int32,input output,timestamp for data between engine and arduino
+marker,12,config,0,0,int32,input output,record marker
 mode,20,config,0,0,int32,output,Mode the controls the autonomy
 usr_right,21,usr,0,0,int32,input,Set of ultrasonic sensor readings on the right
 usr_left,22,usr,0,0,int32,input,Set of ultrasonic sensor reading on the left

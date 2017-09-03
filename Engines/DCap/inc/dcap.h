@@ -25,6 +25,7 @@
 #include <arpa/inet.h>
 #include "fsock.h"
 #include <syslog.h>
+#include <chrono>
 
 #define PORT 2018
 
@@ -36,5 +37,9 @@ string received_str = "";
 vector<string> payload;
 
 shared_ptr<make_fsock> new_sock = make_shared<make_fsock>(PORT);
+
+chrono::system_clock::time_point start_recording, instant_point;
+chrono::milliseconds time_taken;
+int time_taken_val;
 
 #endif

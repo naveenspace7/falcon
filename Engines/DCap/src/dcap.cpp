@@ -84,6 +84,7 @@ int thread_function()
 				//cout << '\n'; // Debug
 			}						
 			init_done = true;
+			start_recording = chrono::system_clock::now();
 		}
 			
 		else if(recording == true && init_done == true)
@@ -91,7 +92,11 @@ int thread_function()
 			//write the data into the file
 			{
 				ostringstream row;
-				row << counter*sample_time << ','; // Timestamp
+				instant_point = chrono::system_clock::now();
+				time_taken = chrono::duration_cast<chrono::milliseconds>(instant_point - start_recording);
+				time_taken_val = time_taken.count();
+
+				row << time_taken_val << ','; // Timestamp
 				for(int each_addr : address)
 					row << *(base+each_addr) << ",";
 				row << '\n';

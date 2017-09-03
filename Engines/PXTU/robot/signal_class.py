@@ -52,12 +52,11 @@ class signal(socket_config):
         '''
 
         #print "Reading " + self.name + '...'       
-        payload = self.construct_payload(1) #Constructing the payload
-        
+        payload = '{' + self.construct_payload(1) + '}\0' #Constructing the payload        
         send = socket_config._client_sock.sendto(payload , socket_config._addr)
-
         try:
                 self._data,self._addr2 = socket_config._client_sock.recvfrom(1024) #receiving the address from the server
+                self._data = self._data[1:-2]
                 #print "Data received from the server: " + str(self.__data)                    
         except socket.timeout:
                 print "Timeout!"

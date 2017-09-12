@@ -123,6 +123,7 @@ int thread_function()
 
 int main()
 {
+	openlog("Falcon:DCap", LOG_CONS | LOG_NDELAY | LOG_PERROR | LOG_PID, LOG_USER);
 	#if DEBUG==0
 	pid_t pid, sid;
 	pid = fork();
@@ -146,17 +147,20 @@ int main()
 	thread FileThread(thread_function);
 	string received_string = "";
 
+	syslog(LOG_INFO, "%s", "Started DCap engine");
+
 	while(1)
 	{
-		cout << "***** DCAP Engine *****" << endl;
-		cout << "Waiting for DCap client..." << endl;		
+		//cout << "***** DCAP Engine *****" << endl;
+		//cout << "Waiting for DCap client..." << endl;		
 
 		string buff(new_sock->sock_recv());
 		if (buff == "ERROR")
 			return -1;
 
-
-		cout << "Request Received : " << buff << endl;
+		string log_msg = "Request Rx:" + buff;
+		syslog(LOG_INFO, "%s", log_msg.c_str());
+		//cout << "Request Received : " << buff << endl;
 		received_string = buff;
 		payload = decode_string(received_string);
 

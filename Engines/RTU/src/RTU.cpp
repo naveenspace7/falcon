@@ -35,8 +35,11 @@ void perform_action(pair<int, int> payload_pair)
 		case 1: //Read command
 		{			
 			read_flag = true;
-			cout << "Name-" << sig_map[rec_addr] << endl;
-			cout << "Cmd-R" << endl;
+			string log_msg;
+			log_msg = "Cmd=R, Name:" + sig_map[rec_addr];
+			syslog(LOG_INFO, "%s", log_msg.c_str());
+			//cout << "Name-" << sig_map[rec_addr] << endl; // DEBUG
+			//cout << "Cmd-R" << endl; // DEBUG
 			int temp_val = *(shm + rec_addr); // Reading the value from the SHM
 			read_values[payload_pointer] = to_string(temp_val); // Put it into the right place		
 			break;
@@ -45,10 +48,14 @@ void perform_action(pair<int, int> payload_pair)
 		case 2: // Write Command
 		{
 			read_flag = false;
-			cout << "Name-" << sig_map[rec_addr] << endl;
-			cout << "Cmd-W" << endl;
+			string log_msg;
+			log_msg = "Cmd=W, Name:" + sig_map[rec_addr] + ", ";
+			//cout << "Name-" << sig_map[rec_addr] << endl; //DEBUG
+			//cout << "Cmd-W" << endl; //DEBUG
 			int temp_new_val = ((command & VAL) >> VALOFF); //Obtaining the new value to be written from the payload
-			cout << "New value: " << temp_new_val << endl;
+			//cout << "New value: " << temp_new_val << endl;
+			log_msg += "Value:" + to_string(temp_new_val);
+			syslog(LOG_INFO, "%s", log_msg.c_str());
 			*(shm + rec_addr) = temp_new_val;	//writing the new value into SHM
 			break;
 		}
@@ -69,7 +76,7 @@ string pack_read_payload()
 int main(int argc, char *argv[])
 {
 	//setlogmask(LOG_UPTO(LOG_NOTICE));
-	openlog("RTU", LOG_CONS | LOG_NDELAY | LOG_PERROR | LOG_PID, LOG_USER);
+	openlog("Falcon:RTU", LOG_CONS | LOG_NDELAY | LOG_PERROR | LOG_PID, LOG_USER);
 	#if DEBUG == 0	// MAKE ME A DAEMON
 	pid_t pid, sid;
 	pid = fork();
@@ -90,7 +97,7 @@ int main(int argc, char *argv[])
 	close(STDERR_FILENO);
 	#endif
 
-	//syslog(LOG_INFO, "Starting RTU Engine");
+	syslog(LOG_INFO, "Starting RTU Engine");
 	// Daemon code ends here and actual code start from here
 
 	shm = get_base(); // Obtain the base address of the shared memory
@@ -112,7 +119,9 @@ int main(int argc, char *argv[])
 
 		read_values.resize(str_buff.size()); // Make the size to the received length
 
-		cout << "decoded:" << buff << endl;
+		string decoded = "Decoded:" + buff;
+		//cout << "decoded:" << buff << endl;
+		syslog(LOG_INFO, "%s", decoded.c_str());
 
 		for (vector<pair<int, int>>::iterator ele = str_buff.begin(); ele != str_buff.end(); ele++)
 		{

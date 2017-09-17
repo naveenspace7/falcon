@@ -27,6 +27,8 @@ signals::signals(string name,int*&Base)
 		address = atoi(node.node().attribute("address").value());
 		//cout << "Address: " << address << endl; //debug
 	}
+
+	delete path_string_1;
 }
 
 int signals::get()

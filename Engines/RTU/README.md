@@ -10,11 +10,11 @@ The data is packeted according to the format given in [.doc].
 2. RTU can perform simultaneous multiple operations with very least latency.
 
 #### Limitations
-No know limitations
+No known limitations
 
 #### Run Modes
-Debug Mode: To run the engine in debug mode, the DEBUG switch in CMakeLists.txt should be set to 1. Doing this will launch the process with connect to the TTY console.
-Real Mode: Making the DEBUG switch 0 while building, will make the program run as a daemon. The logging takes place in syslog.
+1. Debug Mode: To run the engine in debug mode, the DEBUG switch in CMakeLists.txt should be set to 1. Doing this will launch the process with connect to the TTY console.
+2. Real Mode: Making the DEBUG switch 0 while building, will make the program run as a daemon. The logging takes place in syslog.
 
 #### Building the Engine
 1. Direct to linux_build in RTU directory. if one doesn't exist, create it.

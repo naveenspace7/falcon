@@ -24,5 +24,5 @@ Real Mode: Making the DEBUG switch 0 while building, will make the program run a
 #### Flowchart
 The flowchart below gives a higher level structure of the source.
 
-[Flowchart for RTU Engine](https://github.com/naveenspace7/falcon/blob/v0.3/Engines/RTU/doc/Flowchart.png)
+![Flowchart for RTU Engine](https://github.com/naveenspace7/falcon/blob/v0.3/Engines/RTU/doc/Flowchart.png)
 

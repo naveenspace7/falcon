@@ -9,9 +9,15 @@ from collections import namedtuple
 #print "Importing modules..."
 
 db_path = "E:\\Falcon\\Common\\Signals\\signals_database.db" # TODO: Remove the hardcoded path. Read it from the XML
+
 queryString = "SELECT t1.Name as name, t1.Address as address, t1.Parent as parent, t1.Min as min, t1.Max as max, "
 queryString += "t1.DataType as dType, t1.Description as desc FROM signal AS t1 WHERE parent = '{}'"
 
+def returnObjString(each):
+    objString = "self.{name} = signal('{name}',{address},'{parent}',{minV},{maxV},'{dType}','{desc}')".format(name=each["name"],address=each["address"],parent=each["parent"],
+                                                                       minV=each["min"],maxV=each["max"],dType=each["dType"],desc=each["desc"])
+    return objString
+    
 def factory(someTuple):
     '''
     Input: list of tuples
@@ -46,11 +52,9 @@ class IR(object):
         #print "Cursor",cursor
         count = 0
 
-        for each in cursor:            
-            temp_string = "self.{} = signal('{}',{},'{}',{},{},'{}','{}')".format(each["name"],each["name"],each["address"],each["parent"],
-                                                                       each["min"],each["max"],each["dType"],each["desc"])
-            #print temp_string # Debug
-            exec(temp_string)
+        for each in cursor:                        
+            #print returnObjString(each) # Debug
+            exec(returnObjString(each))
             count += 1
 
         if count == 0:
@@ -74,10 +78,8 @@ class Speed(object):
         count = 0
 
         for each in cursor:        
-            temp_string = "self.{} = signal('{}',{},'{}',{},{},'{}','{}')".format(each["name"],each["name"],each["address"],each["parent"],
-                                                                       each["min"],each["max"],each["dType"],each["desc"])
-            #print temp_string # Debug
-            exec(temp_string)
+            #print returnObjString(each) # Debug
+            exec(returnObjString(each))
             count += 1
 
         if count == 0:
@@ -101,10 +103,8 @@ class Power(object):
         count = 0
 
         for each in cursor:        
-            temp_string = "self.{} = signal('{}',{},'{}',{},{},'{}','{}')".format(each["name"],each["name"],each["address"],each["parent"],
-                                                                       each["min"],each["max"],each["dType"],each["desc"])
-            #print temp_string #debug
-            exec(temp_string)
+            #print returnObjString(each) # Debug
+            exec(returnObjString(each))
             count += 1
 
         if count == 0:
@@ -127,10 +127,8 @@ class USR(object):
         count = 0
 
         for each in cursor:        
-            temp_string = "self.{} = signal('{}',{},'{}',{},{},'{}','{}')".format(each["name"],each["name"],each["address"],each["parent"],
-                                                                       each["min"],each["max"],each["dType"],each["desc"])
-            #print temp_string #debug
-            exec(temp_string)
+            #print returnObjString(each) # Debug
+            exec(returnObjString(each))
             count += 1
 
         if count == 0:
@@ -154,10 +152,8 @@ class Config(object):
         count = 0
 
         for each in cursor:        
-            temp_string = "self.{} = signal('{}',{},'{}',{},{},'{}','{}')".format(each["name"],each["name"],each["address"],each["parent"],
-                                                                       each["min"],each["max"],each["dType"],each["desc"])
-            #print temp_string #debug
-            exec(temp_string)
+            #print returnObjString(each) # Debug
+            exec(returnObjString(each))
             count += 1
 
         if count == 0:
@@ -182,10 +178,8 @@ class Angle(object):
         count = 0
 
         for each in cursor:        
-            temp_string = "self.{} = signal('{}',{},'{}',{},{},'{}','{}')".format(each["name"],each["name"],each["address"],each["parent"],
-                                                                       each["min"],each["max"],each["dType"],each["desc"])
-            #print temp_string #debug
-            exec(temp_string)
+            #print returnObjString(each) # Debug
+            exec(returnObjString(each))
             count += 1
             
         if count == 0:
@@ -209,10 +203,8 @@ class Engines(object):
         count = 0
 
         for each in cursor:            
-            temp_string = "self.{} = signal('{}',{},'{}',{},{},'{}','{}')".format(each["name"],each["name"],each["address"],each["parent"],
-                                                                       each["min"],each["max"],each["dType"],each["desc"])
-            #print temp_string # Debug
-            exec(temp_string)
+            #print returnObjString(each) # Debug
+            exec(returnObjString(each))
             count += 1
 
         if count == 0:

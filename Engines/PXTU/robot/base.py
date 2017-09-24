@@ -23,7 +23,6 @@ class Base(object):
         print "Done initializing Base"
 
 class Record(socket_config):
-#class Record(object):
     
     recording = False
 

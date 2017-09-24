@@ -26,4 +26,6 @@ find_library(SIG signals ${ROOT_PATH}/Libraries/bin)
 find_library(SOCK FSOCK ${ROOT_PATH}/Libraries/bin)
 add_executable(RTU ./src/RTU.cpp)
 
+set_target_properties(RTU PROPERTIES VERSION "0.3")
+
 target_link_libraries(RTU ${ENGFRM} ${PUGI} ${SIG} ${SOCK} pthread)

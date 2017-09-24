@@ -17,11 +17,11 @@ usr_right,21,usr,0,100,int,input,Set of ultrasonic sensor readings on the right
 usr_left,22,usr,0,100,int,input,Set of ultrasonic sensor reading on the left
 usr_front,23,usr,0,100,int,input,Set of ultrasonic sensor readings on the front
 usr_rear,24,usr,0,100,int,input,Set of ultrasonic sensor readings on the rear
-wheel_r,31,speed,0,255,int,input,
-wheel_l,32,speed,0,255,int,input,
-speed,33,speed,0,255,int,output,
-power_l,41,power,0,255,int,output,
-power_r,42,power,0,255,int,output,
+wheel_r,31,speed,-255,255,int,input,
+wheel_l,32,speed,-255,255,int,input,
+speed,33,speed,-255,255,int,output,
+power_l,41,power,-255,255,int,output,
+power_r,42,power,-255,255,int,output,
 ir_front,51,ir,0,0,discrete,input,Set of ir sensor readings on the front
 ir_rear,52,ir,0,0,discrete,input,Set of ir sensor readings on the rear
 angle,61,angle,0,360,int,input,The angle reading from the magnetometer.

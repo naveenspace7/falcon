@@ -33,7 +33,6 @@
 #define PORT 2017
 #define SHSIZE 400
 
-//#define VAL 268433408 //Mask for value
 #define VAL 134215680 //Mask for value 
 #define SIGN 27
 
@@ -56,6 +55,5 @@ int* shm;
 mutex mx;
 bool read_flag = false;
 vector<string> read_values;
-
 
 #endif

@@ -34,7 +34,7 @@ class socket_config(object):
 
 class signal(socket_config):    
 
-    def __init__(self,name,address,partition,desc=None):
+    def __init__(self,name,address,partition,minVal,maxVal,dType,desc=None):
         
         #signal members
         self.name = name
@@ -43,6 +43,16 @@ class signal(socket_config):
         self.__partition = partition
         self.__value = 0
         self.__desc = desc
+        self.__dType = dType
+        self.__minVal = minVal
+        self.__maxVal = maxVal
+
+    def check_range(self,val):
+        
+        if val >= self.__minVal and val <= self.__maxVal:
+            return True
+        else:
+            return False
 
     def read(self):
         '''
@@ -72,17 +82,21 @@ class signal(socket_config):
         '''
 
         print "Writing " + str(new_value) + " to " + self.name + '...'
-        payload = '{' + self.construct_payload(2,new_value) + '}\0'
-        send = socket_config._client_sock.sendto(payload , socket_config._addr)
+        valid = self.check_range(new_value)
 
-        try:
-                self._data,self._addr2 = socket_config._client_sock.recvfrom(1024) #receiving the address from the server
-                print "Data received from the server: " + str(self._data)                    
-        except socket.timeout:
-                print "Timeout!"
-                return None
+        if valid:
+            payload = '{' + self.construct_payload(2,new_value) + '}\0'
+            send = socket_config._client_sock.sendto(payload , socket_config._addr)
 
-        return self._data
+            try:
+                    self._data,self._addr2 = socket_config._client_sock.recvfrom(1024) #receiving the address from the server
+                    print "Data received from the server: " + str(self._data)                    
+            except socket.timeout:
+                    print "Timeout!"
+                    return None
+            return self._data
+        else:
+            return "Out of range value given"
 
     def construct_payload(self,cmd,value=0):
         '''

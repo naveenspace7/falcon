@@ -115,27 +115,27 @@ class payload_package():
     def payload(self):
         return self.payload
 
-class Engines(object):
-
-    def __init__(self):
-
-        print "Building Engine symbols...",
-        connection = sqlite3.connect(modules.db_path)
-        cursor = connection.execute("SELECT t1.Name, t1.Address, t1.Parent, t1.Description FROM signal AS t1 WHERE t1.parent = 'engine'")
-        count = 0
-
-        for each in cursor:            
-            temp_string = "self.{} = engine_signal('{}',{},'{}','{}')".format(each[0],each[0],each[1],each[2],each[3])
-            #print temp_string # Debug
-            exec(temp_string)
-            count += 1
-
-        if count == 0:
-            print "Warning: No symbols found"
-        else:
-            print str(count) + ' Engine Symbols added successfully\n'
-
-        connection.close()
+##class Engines(object):
+##
+##    def __init__(self):
+##
+##        print "Building Engine symbols...",
+##        connection = sqlite3.connect(modules.db_path)
+##        cursor = connection.execute("SELECT t1.Name, t1.Address, t1.Parent, t1.Description FROM signal AS t1 WHERE t1.parent = 'engine'")
+##        count = 0
+##
+##        for each in cursor:            
+##            temp_string = "self.{} = engine_signal('{}',{},'{}','{}')".format(each[0],each[0],each[1],each[2],each[3])
+##            #print temp_string # Debug
+##            exec(temp_string)
+##            count += 1
+##
+##        if count == 0:
+##            print "Warning: No symbols found"
+##        else:
+##            print str(count) + ' Engine Symbols added successfully\n'
+##
+##        connection.close()
 
 class Signals(socket_config):
 

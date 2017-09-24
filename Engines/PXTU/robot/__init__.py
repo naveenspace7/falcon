@@ -1,4 +1,5 @@
-from base import Base, Record, Engines, Signals
+from base import Base, Record, Signals
+import modules
 
 import xml.etree.ElementTree as ET
 
@@ -13,8 +14,9 @@ __network_conf = [s[0].attrib['address'],int(s[1].attrib['value']),int(s[2].attr
 __pxtu_sock = signal_class.socket_config(__network_conf[0],__network_conf[1],__network_conf[2])
 base = Base()
 record = Record()
-engines = Engines()
+engines = modules.Engines()
 
 # To eliminate stray references
 del s, root, ET
-del Base, Record, Engines
+del modules
+del Base, Record

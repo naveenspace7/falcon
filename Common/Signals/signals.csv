@@ -1,29 +1,29 @@
 Name,Address,Parent,Min,Max,Data-type,Input/Output,Comments
-lock,0,config,0,0,int32,input output,Used to lock the SHM
-arduino,1,engine,0,0,int32,input output,PID and status of eng1
-engine_2,2,engine,0,0,int32,input output,PID and status of eng2
-engine_3,3,engine,0,0,int32,input output,PID and status of eng3
-engine_4,4,engine,0,0,int32,input output,PID and status of eng4
-engine_5,5,engine,0,0,int32,input output,PID and status of eng5
-engine_6,6,engine,0,0,int32,input output,PID and status of eng6
-engine_7,7,engine,0,0,int32,input output,PID and status of eng7
-engine_8,8,engine,0,0,int32,input output,PID and status of eng8
-engine_9,9,engine,0,0,int32,input output,PID and status of eng9
-engine_10,10,engine,0,0,int32,input output,PID and status of eng10
-timestamp,11,config,0,0,int32,input output,timestamp for data between engine and arduino
-marker,12,config,0,0,int32,input output,record marker
-mode,20,config,0,0,int32,output,Mode the controls the autonomy
-usr_right,21,usr,0,0,int32,input,Set of ultrasonic sensor readings on the right
-usr_left,22,usr,0,0,int32,input,Set of ultrasonic sensor reading on the left
-usr_front,23,usr,0,0,int32,input,Set of ultrasonic sensor readings on the front
-usr_rear,24,usr,0,0,int32,input,Set of ultrasonic sensor readings on the rear
-wheel_r,31,speed,0,0,int32,input,
-wheel_l,32,speed,0,0,int32,input,
-speed,33,speed,0,0,int32,output,
-power_l,41,power,0,0,int32,output,
-power_r,42,power,0,0,int32,output,
+lock,0,config,0,1,uint,input output,Used to lock the SHM
+arduino,1,engine,0,3500,uint,input output,PID and status of eng1
+engine_2,2,engine,0,3500,uint,input output,PID and status of eng2
+engine_3,3,engine,0,3500,uint,input output,PID and status of eng3
+engine_4,4,engine,0,3500,uint,input output,PID and status of eng4
+engine_5,5,engine,0,3500,uint,input output,PID and status of eng5
+engine_6,6,engine,0,3500,uint,input output,PID and status of eng6
+engine_7,7,engine,0,3500,uint,input output,PID and status of eng7
+engine_8,8,engine,0,3500,uint,input output,PID and status of eng8
+engine_9,9,engine,0,3500,uint,input output,PID and status of eng9
+engine_10,10,engine,0,3500,uint,input output,PID and status of eng10
+timestamp,11,config,0,3500,uint,input output,timestamp for data between engine and arduino
+marker,12,config,0,3500,uint,input output,record marker
+mode,20,config,0,0,uint,output,Mode the controls the autonomy
+usr_right,21,usr,0,100,int,input,Set of ultrasonic sensor readings on the right
+usr_left,22,usr,0,100,int,input,Set of ultrasonic sensor reading on the left
+usr_front,23,usr,0,100,int,input,Set of ultrasonic sensor readings on the front
+usr_rear,24,usr,0,100,int,input,Set of ultrasonic sensor readings on the rear
+wheel_r,31,speed,0,255,int,input,
+wheel_l,32,speed,0,255,int,input,
+speed,33,speed,0,255,int,output,
+power_l,41,power,0,255,int,output,
+power_r,42,power,0,255,int,output,
 ir_front,51,ir,0,0,discrete,input,Set of ir sensor readings on the front
 ir_rear,52,ir,0,0,discrete,input,Set of ir sensor readings on the rear
-angle,61,angle,0,360,int32,input,The angle reading from the magnetometer.
-angle_cmd,62,angle,0,360,int32,output,Angle commanded by the calculation engine.
-exit,70,util,0,1,int32,input output,Turn off the engine by making this to 67
+angle,61,angle,0,360,int,input,The angle reading from the magnetometer.
+angle_cmd,62,angle,0,360,int,output,Angle commanded by the calculation engine.
+exit,70,util,0,1,uint,input output,Turn off the engine by making this to 67

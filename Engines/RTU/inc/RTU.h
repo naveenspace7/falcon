@@ -28,12 +28,14 @@
 #include <sstream>
 #include <string>
 #include <mutex>
+#include <bitset>
 
 #define PORT 2017
 #define SHSIZE 400
 
 //#define VAL 268433408 //Mask for value
 #define VAL 134215680 //Mask for value 
+#define SIGN 27
 
 #define ADR 2040 //Mask for address
 #define VALOFF 11 //New write value Offset

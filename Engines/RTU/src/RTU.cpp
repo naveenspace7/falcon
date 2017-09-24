@@ -38,21 +38,24 @@ void perform_action(pair<int, int> payload_pair)
 			string log_msg;
 			log_msg = "Cmd=R, Name:" + sig_map[rec_addr];
 			syslog(LOG_INFO, "%s", log_msg.c_str());
-			//cout << "Name-" << sig_map[rec_addr] << endl; // DEBUG
-			//cout << "Cmd-R" << endl; // DEBUG
-			int temp_val = *(shm + rec_addr); // Reading the value from the SHM
+			int temp_val = *(shm + rec_addr); // Reading the value from the SHM			
+			log_msg = "Read Value: " + to_string(temp_val);
+			syslog(LOG_INFO, "%s", log_msg.c_str());
 			read_values[payload_pointer] = to_string(temp_val); // Put it into the right place		
 			break;
 		}
 
 		case 2: // Write Command
 		{
+			bitset<32> incoming_cmd = command;			
 			read_flag = false;
-			string log_msg;
+			string log_msg;			
 			log_msg = "Cmd=W, Name:" + sig_map[rec_addr] + ", ";
 			//cout << "Name-" << sig_map[rec_addr] << endl; //DEBUG
 			//cout << "Cmd-W" << endl; //DEBUG
 			int temp_new_val = ((command & VAL) >> VALOFF); //Obtaining the new value to be written from the payload
+			if (incoming_cmd.test(SIGN) == 1)
+				temp_new_val = 0 - temp_new_val;
 			//cout << "New value: " << temp_new_val << endl;
 			log_msg += "Value:" + to_string(temp_new_val);
 			syslog(LOG_INFO, "%s", log_msg.c_str());

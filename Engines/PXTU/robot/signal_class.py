@@ -109,8 +109,13 @@ class signal(socket_config):
         if cmd == 1:
             command = (self.__address << 3) | cmd
         elif cmd == 2:
-            command = (value << 11) | (self.__address << 3) | cmd
-
+            command = 0
+            if value < 0:
+                # remove the sign                
+                value = abs(value)
+                command |= (1 << 27)                        
+            command |= (value << 11) | (self.__address << 3) | cmd                                                    
+            
         command = str(command)
         
         return command
@@ -168,7 +173,7 @@ class engine_signal(signal):
     
 if __name__ == "__main__":
         
-    new_signal = signal('naveen',345,'part')
+    new_signal = signal('naveen',345,'part') #won't work
     
 
         

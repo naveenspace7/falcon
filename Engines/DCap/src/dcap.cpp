@@ -20,9 +20,10 @@ vector<string> decode_string(string inp)
 	for (auto buff = strtok(&trimmed_string[0], ";"); buff != NULL; buff = strtok(NULL, ";"))
 		params.push_back(buff);
 
-	//Debug
+	#if DEBUG==0 //Debug
 	for (auto i : params)
 		cout << i << endl;
+	#endif
 
 	return params;
 }
@@ -103,7 +104,7 @@ int thread_function()
 				//cout << row.str(); // Debug
 				outfile << row.str();
 				counter++;
-				usleep(sample_time*1000); // TODO: read this from the payload				
+				usleep(sample_time*1000);
 			}
 		}
 		else
@@ -151,9 +152,6 @@ int main()
 
 	while(1)
 	{
-		//cout << "***** DCAP Engine *****" << endl;
-		//cout << "Waiting for DCap client..." << endl;		
-
 		string buff(new_sock->sock_recv());
 		if (buff == "ERROR")
 			return -1;
@@ -172,10 +170,7 @@ int main()
 
 		new_sock->sock_send(string("Done"));
 	}
-	
-		
+			
 	//string received_string = "{1;[31,32,33,1,5,6];100;'temp.csv'}";
-	//payload = decode_string(received_string);
-		
 	return 0;
 }

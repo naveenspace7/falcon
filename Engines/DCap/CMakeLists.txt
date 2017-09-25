@@ -26,4 +26,6 @@ find_library(SIG signals ${ROOT_PATH}/Libraries/bin)
 find_library(SOCK FSOCK ${ROOT_PATH}/Libraries/bin)
 add_executable(dcap ./src/dcap.cpp)
 
+set_target_properties(dcap PROPERTIES VERSION "0.3")
+
 target_link_libraries(dcap ${ENGFRM} ${PUGI} ${SIG} ${SOCK} pthread)

@@ -31,7 +31,7 @@
 
 using namespace std;
 
-bool recording = false;
+bool record = false;
 bool init_done = false;
 string received_str = "";
 vector<string> payload;

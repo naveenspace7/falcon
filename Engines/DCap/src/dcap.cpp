@@ -14,7 +14,7 @@ string trim_string(string inp)
 vector<string> decode_string(string inp)
 {
 	string trimmed_string(trim_string(inp));
-	cout << trimmed_string << endl;
+	cout << trimmed_string << endl; // Debug
 	vector<string> params;
 	
 	for (auto buff = strtok(&trimmed_string[0], ";"); buff != NULL; buff = strtok(NULL, ";"))
@@ -60,7 +60,7 @@ int thread_function()
 
 	while(1)
 	{
-		if(recording == true && init_done == false)
+		if(record == true && init_done == false)
 		{
 			sample_time = 1000/stoi(payload.at(2)); // Get the rate in MS from frequency			
 			outfile.open("/home/pi/Falcon/" + payload[3]); // Opening the file here with the name received in the payload
@@ -88,7 +88,7 @@ int thread_function()
 			start_recording = chrono::system_clock::now();
 		}
 			
-		else if(recording == true && init_done == true)
+		else if(record == true && init_done == true)
 		{
 			//write the data into the file
 			{
@@ -157,16 +157,15 @@ int main()
 			return -1;
 
 		string log_msg = "Request Rx:" + buff;
-		syslog(LOG_INFO, "%s", log_msg.c_str());
-		//cout << "Request Received : " << buff << endl;
+		syslog(LOG_INFO, "%s", log_msg.c_str());		
 		received_string = buff;
 		payload = decode_string(received_string);
 
 		//cout << payload.at(0) << endl; // Debug
 		if(payload.at(0) == "1")
-			recording = true;
+			record = true;
 		else
-			recording = false;
+			record = false;
 
 		new_sock->sock_send(string("Done"));
 	}

@@ -24,5 +24,5 @@ No feature for pausing the recording. Should come in future implementations.
 #### Flowchart
 The flowchart below gives a higher level structure of the source.
 
-![Flowchart for DCap Engine](https://github.com/naveenspace7/falcon/blob/v0.3/Engines/DCap/doc/dcap_Flowchart.png)
+![Flowchart for DCap Engine](./doc/dcap_Flowchart.png)
 

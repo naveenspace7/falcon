@@ -38,6 +38,9 @@ class Record(socket_config):
 
         returns: if it is recording or not
         '''
+
+        if len(sig_list) > 10:
+            return "Error: Recorder can only take 10 signals"
         
         if Record.recording != True:            
             # Give a file name corresponding to time if no file name is specified

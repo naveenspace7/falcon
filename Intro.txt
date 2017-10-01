@@ -1,0 +1,3 @@
+This is for testing SVN commits into Git.
+
+This is purely for experimentation.

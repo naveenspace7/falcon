@@ -198,12 +198,17 @@ class Signals(socket_config):
               value = 0 (default) or value (to be written)
         Return: data written into the signal
         '''
+
         if cmd == 1:
             command = (signal._address << 3) | cmd
         elif cmd == 2:
-            command = (value << 11) | (signal._address << 3) | cmd
-
+            command = 0
+            if value < 0:
+                # remove the sign                
+                value = abs(value)
+                command |= (1 << 27)                        
+            command |= (value << 11) | (signal._address << 3) | cmd                                                    
+            
         command = str(command)
         
         return command
-        

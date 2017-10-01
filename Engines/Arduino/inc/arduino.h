@@ -16,6 +16,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <vector>
+#include "arduino.h"
+#include <signal.h>
 
 using namespace std;
 
@@ -23,7 +25,10 @@ class arduino: public engineFrame
 {
 private:
 	int fd, baud;
+	int timestamp, stale_counter;
 public:
+	bool rw = true; // true = read, false = write
+	int current_timestamp; // The new timestamp for the upcoming transaction
 	arduino();
 	// Serial attributes
 	void serial(const char*, int);
@@ -32,13 +37,15 @@ public:
 	void Close();
 	int len_of(char*);
 	int ping();
-	int query(int);
-	int get_ser_data();
+	string query(int);
+	string get_ser_data();
 	void test();
 	// Engine attributes
 	static void compute(int);
 	void init();
-	
+	void verify_timestamp();
+	void obtain_datablock();
+	vector<int> decode_string(const string&);
 };
 
 shared_ptr<signals> usr_rt;
@@ -61,6 +68,8 @@ shared_ptr<signals> angle;
 shared_ptr<signals> angle_cmd;
 
 shared_ptr<signals> lock;
+
+shared_ptr<signals> timestamp_arduino;
 
 arduino Engine;
 

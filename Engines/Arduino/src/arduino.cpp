@@ -1,19 +1,126 @@
-#include "engineFrame.h"
-#include <iostream>
 #include "arduino.h"
-#include <signal.h>
 
 using namespace std;
 
-void compute(int signum)
+/* This function runs only when called by the master.
+   Should run twice in every frame */
+void compute(int signal_number)
 {
-	Engine.setLock(1);
+	Engine.compute_start();     // Consumes the start time and locks the SHM
+	
+	// Alternates between Read and Write depending on variable Engine.rw
+	if(Engine.rw) // Reading data from Arduino base
+	{
+		Engine.obtain_datablock();
+		cout << "Compute function called inside read arduino\n";
+	}
 
- 	cout << "Compute function called inside arduino\n";
-
- 	Engine.setLock(0);
+	else // Writing data to Arduino base
+	{		
+		cout << "Compute function called inside write arduino\n";
+		// TODO: Obtain some confirmation that data has been written to Base
+	}
+ 	
+ 	Engine.compute_end();		// Consumes the stop time and unlocks the SHM
+ 	Engine.rw = !Engine.rw;		// Toggle between Read and Write
 }
 
+/* Obtains the data block from the Arduino base
+   This function packs the data into vector and writes into the signal SHM. */
+void arduino::obtain_datablock()
+{
+	string serial_data = "";
+
+	serial_data = query(1);      // Query the Arduino base for data block
+	serial_data = "";            // HACK: query is adding bad data into this
+
+	if(serial_data != "")        // Ignore if the string is blank
+	{		
+		vector<int> sensor_values = decode_string(serial_data);
+
+		current_timestamp = sensor_values[0]; // Obtain the timestamp
+
+		verify_timestamp();
+		
+		// Setting the signals into the SHM
+		timestamp_arduino->set(current_timestamp);
+		usr_fr->set(sensor_values[1]);
+		usr_rt->set(sensor_values[2]);
+		usr_rr->set(sensor_values[3]);
+		usr_lt->set(sensor_values[4]);
+		angle->set(sensor_values[5]);	
+	}
+
+	else
+		cout << "No data received from Arduino\n";	
+}
+
+/* Takes the string received from Arduino base, strips it 
+   and packs them into vector.*/
+vector<int> arduino::decode_string(const string& rx_string)
+{
+	/*
+	Format of string data received: ";14;23;45;26;\0"
+	Example: ";14;23;45;26;\0" ---> {14,23,45,26}
+	*/
+	cout << "Decoding string: " << rx_string << endl; // Debug
+	// str_pt - index pointer, start - word start index, end - word end index
+	int str_pt = 0, start = 0, end = 0;
+	// Obtaining word - true:word started false: word not started 
+ 	bool s_bool = false;
+	string sub_str;   // Substring holder
+	vector<int> value_vector;
+ 	while(1)
+ 	{
+  		if(rx_string[str_pt] != '\0')
+  		{
+   			if(rx_string[str_pt] == ';' && s_bool == true)
+   			{
+			    end = str_pt - 1;
+			    sub_str = rx_string.substr(start,end-start+1);
+				//cout << sub_str << endl; // Debug
+    			value_vector.push_back(stoi(sub_str));
+    			s_bool = false;
+   			}
+   		else if(rx_string[str_pt] == ';' && s_bool == false)
+   		{
+	    	start = str_pt + 1;
+	    	s_bool = true;
+	    	str_pt++;
+   		}
+   		else
+    		str_pt++;
+  		}
+  		else
+   			break;
+ 	}
+ 	return value_vector;
+}
+
+/* Checking the timestamp of current transaction.
+   Reports when stale data is received */
+void arduino::verify_timestamp() // Get the timestamp and compare it with the present timestamp.
+{	
+	if(timestamp >= current_timestamp)
+	{
+		cout << "Stale data received from Arduino base.\n";
+		stale_counter++;
+
+		if(stale_counter % 5 == 0) // If stale data is received more than 5 times raise an error
+		{
+			cout << "ERROR: Looks like Arduino base is down.\n";
+			// TODO: take any corrective steps HERE
+		}
+	}
+
+	else // Updated data received
+	{
+		timestamp = current_timestamp; // Updating the timestamp
+		stale_counter = 0;
+	}
+}
+
+/* Defining serial port and opening */
 void arduino::serial(const char* dev_name, int in_baud) // : baud(in_baud)
 {	
 	baud = in_baud;
@@ -25,15 +132,17 @@ void arduino::Close()
 	close(fd);
 }
 
-int arduino::Send(int n) //(const int fd, const char *s)
+/* Send a number to the destination Arduino base */
+int arduino::Send(int n)
 {
 	//n is a number but we need the string version of it
 	char temp_buff[10];
 	sprintf(temp_buff,"%d\r",n);	  		
 	int len = len_of(temp_buff);
-	return write (fd, temp_buff, len) ;
+	return write (fd, temp_buff, len);
 }
 
+/* Measure the length of the char array by count chars until '\0' */
 int arduino::len_of(char* temp)
 {
 	int len = 0;
@@ -47,7 +156,7 @@ int arduino::len_of(char* temp)
 	return len+1;
 }
 
-
+/* Configure the serial connection */
 int arduino::Open(const char* device)
 {
 	cout << "Device: " << device << endl;
@@ -118,12 +227,15 @@ int arduino::Open(const char* device)
 	return 1;
 }
 
-arduino::arduino() : engineFrame("arduino_engine",1)
-{ 
- serial("/dev/ttyUSB0",9600);
+/* Instantiating the new engine */
+arduino::arduino() : engineFrame("arduino_engine",1) // 1 is the engine ID
+{
+	serial("/dev/ttyUSB0",9600); // Giving the device file and baud rate
+ 	timestamp = 0;               // Resetting the timestamp
 }
 
-int arduino::get_ser_data()
+/* Obtain the string data from the Arduino base */
+string arduino::get_ser_data()
 {
 	char read_buffer[10];
 	int result;
@@ -142,15 +254,17 @@ int arduino::get_ser_data()
 		}		
 		usleep(10000);
 	}	
-	int reply = atoi(read_buffer);
+	//int reply = atoi(read_buffer);
+	string reply = string(read_buffer);
 	return reply;
 }
 
-int arduino::query(int x)
+/* Send a request ID and wait for the response */
+string arduino::query(int x)
 {
 	Send(x);
-	int c = get_ser_data();
-	cout << "Rx data: " << c << endl;
+	string c = get_ser_data();
+	cout << "Rx data: " << c << endl; // Debugging
 	return c;
 }
 
@@ -159,6 +273,7 @@ void arduino::test()
 	// Use this only for tests	
 }
 
+/* Periodically run this to test the connection to the base */
 int arduino::ping()
 {	
 	srand(static_cast<int>(getpid()));
@@ -171,6 +286,7 @@ int arduino::ping()
 		query(i);
 }
 
+/* Initialize all the signals */
 void arduino::init()
 {
 	usr_rt = make_shared<signals> ("usr_right",base);
@@ -189,14 +305,16 @@ void arduino::init()
 
 	angle = make_shared<signals> ("angle",base);
 	angle_cmd = make_shared<signals> ("angle_cmd",base);
+
+	timestamp_arduino = make_shared<signals> ("timestamp",base);
+
+	cout << "Signals init done. Engine ready to run.\n";
 }
 
 int main()
 {
- arduino Engine;
- signal(SIGINT,compute);
- //Engine.init();
- cout << "Engine ready to run:\n";
- while(1);
- return 0;
+	Engine.init();
+	signal(10,compute);
+	while(1); // Keep the process alive and do nothing until compute is called
+	return 0;
 }

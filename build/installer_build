@@ -1,0 +1,21 @@
+#! /bin/bash
+
+ROOT_PATH=$HOME/Falcon
+echo off
+# Build Libraries
+mkdir ~/Falcon/Libraries/build && cd ~/Falcon/Libraries/build && cmake .. && make
+echo on
+echo "Done building Libraries"
+
+# Build Engines
+# DCap
+echo off
+mkdir ~/Falcon/Engines/DCap/build && cd ~/Falcon/Engines/DCap/build && cmake .. && make
+#RTU
+mkdir ~/Falcon/Engines/RTU/build && cd ~/Falcon/Engines/RTU/build && cmake .. && make
+
+#mkdir ~/Falcon/Engines/DCap/build && cd ~/Falcon/Engines/DCap/build && cmake .. && make
+
+# Return on success or echo Done
+ 
+

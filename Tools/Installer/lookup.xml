@@ -1,0 +1,23 @@
+<Falcon>
+
+	<Metadata exclude=".svn"/>
+
+	<parent host="E:\Falcon\" target="/home/pi/Falcon/" />
+
+	<files>
+
+		<paths name="AllowedPaths">
+			<path name="src">\src</path>
+			<path name="inc">\inc</path>
+			<path name="cmake">\*.txt</path>
+		</paths>
+
+		<file name="Engines"/>		
+		<file name="Common"/>		
+		<file name="Libraries"/>
+		<file name="build"/>
+
+
+	</files>
+
+</Falcon>

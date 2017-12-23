@@ -86,7 +86,8 @@ namespace FalconDeploy
                     HostName = host,
                     UserName = user,
                     Password = password,
-                    SshHostKeyFingerprint = "ssh-rsa 2048 bf:ec:ef:bc:da:98:8e:f2:21:85:76:7c:1a:f8:ed:49"
+                    //SshHostKeyFingerprint = "ssh-rsa 2048 bf:ec:ef:bc:da:98:8e:f2:21:85:76:7c:1a:f8:ed:49"
+                    SshHostKeyFingerprint = "ssh-rsa 2048 ac:05:47:1f:c6:84:fd:d8:75:df:e1:b0:04:1f:9c:9e"
                 };
 
                 using (WinSCP.Session session = new WinSCP.Session())

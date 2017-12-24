@@ -37,7 +37,7 @@ local PKT_LEN = 3
 
 function robo.dissector(tvbuf,pktinfo,root)
 
-    pktinfo.cols.protocol:set("FALCON") -- set the protocol column to show our protocol name
+    pktinfo.cols.protocol:set("FALCON_RTU") -- set the protocol column to show our protocol name
     
     -- We want to check that the packet size is rational during dissection, so let's get the length of the packet buffer (Tvb).
     local pktlen = tvbuf:reported_length_remaining()

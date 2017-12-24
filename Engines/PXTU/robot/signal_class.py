@@ -54,23 +54,6 @@ class signal(socket_config):
         else:
             return False
 
-    @property
-    def value(self):
-        '''
-        Sends a read command to the RTU
-        '''
-        self.__value = self.read()
-        return self.__value
-
-    @value.setter
-    def value(self,val):
-        '''
-        Sends a write command to the RTU
-        '''        
-        retData = self.write(val)
-        print retData
-        self.__value = val
-
     def read(self):
         '''
         Reads the value from the address.
@@ -98,7 +81,7 @@ class signal(socket_config):
         Return: data written into the signal
         '''
 
-        #print "Writing " + str(new_value) + " to " + self.name + '...' # Debug
+        print "Writing " + str(new_value) + " to " + self.name + '...'
         valid = self.check_range(new_value)
 
         if valid:
@@ -107,7 +90,7 @@ class signal(socket_config):
 
             try:
                     self._data,self._addr2 = socket_config._client_sock.recvfrom(1024) #receiving the address from the server
-                    #print "Data received from the server: " + str(self._data) # Debug
+                    print "Data received from the server: " + str(self._data)                    
             except socket.timeout:
                     print "Timeout!"
                     return None

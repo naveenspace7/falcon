@@ -46,20 +46,34 @@ function robo.dissector(tvbuf,pktinfo,root)
     
     -- We start by adding our protocol to the dissection display tree.
     -- A call to tree:add() returns the child created, so we can add more "under" it using that return value.
-    -- The second argument is how much of the buffer/packet this added tree item covers/represents - in this
-    -- case (DNS protocol) that's the remainder of the packet.
     
     local command = tvbuf(1, pktlen):string()
-    local payload = tonumber(command)
+
+    -- Check if WDone is present in the string, if it is print whatever you see
+    local payload = tonumber(command) 
     local payload_cmd = bit.band(command, 7)
 
     local payload_addr = bit.rshift(bit.band(command, 2040), 3)
     
-    tree:add("Command: " .. payload_cmd)
+    if payload_cmd == 1 then -- For read command
+        tree:add("Command: " .. payload_cmd .. " [Read]")
+
+    elseif payload_cmd == 2 then -- For write command
+        tree:add("Command: " .. payload_cmd .. " [Write]")
+        local payload_data = bit.rshift(bit.band(command, 134215680),11)
+
+        local payload_data_sign = bit.rshift(bit.band(command, 134217728),27)
+        if payload_data_sign == 1 then -- signed number
+            payload_data = 0 - payload_data
+        end
+        tree:add("Data: " .. payload_data)
+        
+    else -- For invalid command
+        tree:add("Command: " .. payload_cmd .. " [Invalid Command]")
+    end
+    
     tree:add("Address: " .. payload_addr)
 
-    -- Now let's add our transaction id under our dns protocol tree we just created.
-    -- The transaction id starts at offset 0, for 2 bytes length.
     
 end
     

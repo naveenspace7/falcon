@@ -42,42 +42,70 @@ function robo.dissector(tvbuf,pktinfo,root)
     -- We want to check that the packet size is rational during dissection, so let's get the length of the packet buffer (Tvb).
     local pktlen = tvbuf:reported_length_remaining()
     local tree = root:add(robo, tvbuf:range(0,pktlen))
+    local type = tvbuf(0,1):string()
+    
     pktlen = pktlen - 3
     
     -- We start by adding our protocol to the dissection display tree.
     -- A call to tree:add() returns the child created, so we can add more "under" it using that return value.
     
-    local command = tvbuf(1, pktlen):string()
+    local raw_command = tvbuf(1, pktlen):string()
+    local items = split(raw_command,',') -- split with ','
+    local command_type = 0
 
-    -- Check if WDone is present in the string, if it is print whatever you see
-    local payload = tonumber(command) 
-    local payload_cmd = bit.band(command, 7)
+    tree:add("Raw Command: " .. raw_command)
 
-    local payload_addr = bit.rshift(bit.band(command, 2040), 3)
-    
-    if payload_cmd == 1 then -- For read command
-        tree:add("Command: " .. payload_cmd .. " [Read]")
-
-    elseif payload_cmd == 2 then -- For write command
-        tree:add("Command: " .. payload_cmd .. " [Write]")
-        local payload_data = bit.rshift(bit.band(command, 134215680),11)
-
-        local payload_data_sign = bit.rshift(bit.band(command, 134217728),27)
-        if payload_data_sign == 1 then -- signed number
-            payload_data = 0 - payload_data
-        end
-        tree:add("Data: " .. payload_data)
-        
-    else -- For invalid command
-        tree:add("Command: " .. payload_cmd .. " [Invalid Command]")
+    if type == '{' then
+        command_type = 1 -- request
+    elseif type == '[' then
+        command_type = 2 -- response
+    else
+        command_type = 0 -- invalid
     end
     
-    tree:add("Address: " .. payload_addr)
+    for key, value in pairs(items) do
 
+        local subtree = tree:add("Element " .. "Raw: " .. value, tvbuf:range(0,pktlen))
+        -- subtree:add("Single command: " .. value)
+        local command = tonumber(value)
+        local payload_cmd = bit.band(command, 7)
+
+        if command_type == 1 then
+            local payload_addr = bit.rshift(bit.band(command, 2040), 3)
+
+            if payload_cmd == 1 then -- For read command
+                subtree:add("Command: " .. payload_cmd .. " [Read]")
     
+            elseif payload_cmd == 2 then -- For write command
+                subtree:add("Command: " .. payload_cmd .. " [Write]")
+                local payload_data = bit.rshift(bit.band(command, 134215680),11)
+    
+                local payload_data_sign = bit.rshift(bit.band(command, 134217728),27)
+                if payload_data_sign == 1 then -- signed number
+                    payload_data = 0 - payload_data
+                end
+                subtree:add("Data: " .. payload_data)
+    
+            else -- For invalid command
+                subtree:add("Command: " .. payload_cmd .. " [Invalid Command]")
+            end
+        
+            subtree:add("Address: " .. payload_addr)
+
+        elseif command_type == 2 then
+            local data = command
+            subtree:add("Data: " .. data)
+        end
+    end
+
 end
-    
-----------------------------------------
--- we want to have our protocol dissection invoked for a specific UDP port,
--- so get the udp dissector table and add our protocol to it
+
+function split(s, delimiter)
+    result = {};
+    for match in (s..delimiter):gmatch("(.-)"..delimiter) do
+        table.insert(result, match);
+    end
+    return result;
+end
+
 DissectorTable.get("udp.port"):add(default_settings.port, robo)   

@@ -66,10 +66,10 @@ void perform_action(pair<int, int> payload_pair)
 // Pack the read values into a ready to be sent form
 string pack_read_payload()
 {
-  string return_str = "{";
+  string return_str = "[";
   for(auto& each_content: read_values)
     return_str += each_content + ",";
-  return_str += "}";
+  return_str += "]";
   return return_str;
 }
 

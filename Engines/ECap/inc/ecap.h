@@ -20,4 +20,7 @@
 
 int *base = get_base();
 
+void convert_text_to_vectors();
+void terminate_tcpdump();
+
 #endif

@@ -14,16 +14,15 @@ void perform_action(pair<int, int> payload_pair)
   mx.lock();
   switch ((int)command & 7) // Checking the command bits
   {
+    // TODO: Make the commands as enum
     case 1: //Read command
     {
       read_flag = true;
-      string log_msg;
-      log_msg = "Cmd=R, Name:" + sig_map[rec_addr];
-      syslog(LOG_INFO, "%s", log_msg.c_str());
-      int temp_val = *(shm + rec_addr); // Reading the value from the SHM
-      log_msg = "Read Value: " + to_string(temp_val);
-      syslog(LOG_INFO, "%s", log_msg.c_str());
-      read_values[payload_pointer] = to_string(temp_val); // Put it into the right place
+     
+      int readValue = *(shm + rec_addr); // Reading the value from the SHM
+      LogReadWriteOperation(sig_map[rec_addr], readValue, read_flag);
+
+      read_values[payload_pointer] = to_string(readValue); // Put it into the right place
       break;
     }
 
@@ -32,13 +31,13 @@ void perform_action(pair<int, int> payload_pair)
       bitset<32> incoming_cmd = command;
       read_flag = false;
       string log_msg;
-      log_msg = "Cmd=W, Name:" + sig_map[rec_addr] + ", ";
-      int temp_new_val = ((command & VAL) >> VALOFF); //Obtaining the new value to be written from the payload
+
+      int writeValue = ((command & VAL) >> VALOFF); //Obtaining the new value to be written from the payload
       if (incoming_cmd.test(SIGN) == 1)
-        temp_new_val = 0 - temp_new_val;
-      log_msg += "Value:" + to_string(temp_new_val);
-      syslog(LOG_INFO, "%s", log_msg.c_str());
-      *(shm + rec_addr) = temp_new_val; //writing the new value into SHM
+        writeValue = 0 - writeValue;
+      
+      LogReadWriteOperation(sig_map[rec_addr], writeValue, read_flag);
+      *(shm + rec_addr) = writeValue; //writing the new value into SHM
       break;
     }
   }
@@ -127,4 +126,23 @@ void RunAsDaemon()
   close(STDIN_FILENO);
   close(STDOUT_FILENO);
   close(STDERR_FILENO);
+}
+
+//
+void LogReadWriteOperation(const string& signalName, int& signalValue, bool& readFlag)
+{
+  string log_msg;
+
+  if (readFlag)
+  {
+    log_msg = "Cmd=R, Name:" + signalName + ", ";
+    log_msg += "Read Value:" + to_string(signalValue);
+  }
+  else
+  {
+    log_msg = "Cmd=W, Name:" + signalName + ", ";
+    log_msg += "Write Value:" + to_string(signalValue);
+  }
+
+  syslog(LOG_INFO, "%s", log_msg.c_str());
 }

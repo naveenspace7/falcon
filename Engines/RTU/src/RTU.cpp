@@ -1,33 +1,15 @@
 #include "RTU.h"
+#include "Message.h"
 
 using namespace std;
 using namespace pugi;
-
-// Removes the trailing and preceding braces
-string trim_string(string inp)
-{
-  int len = inp.length();
-  string trimmed_string = inp.substr(1, len - 2);
-  return trimmed_string;
-}
-
-/*input: "{234,456,678}"
-output: vector[234,456,678]*/
-vector<pair<int,int>> decode(string payload_str)
-{	
-  istringstream str_buff(trim_string(payload_str));
-  vector<pair<int,int>> payload_pair; // first: element_no, second: request
-  int count = 0; // element_no
-  for (string each; getline(str_buff, each, ','); payload_pair.push_back(make_pair(count++,stoi(each))));
-  return payload_pair;
-}
 
 // Actual code for handling the requests: will be a thread
 void perform_action(pair<int, int> payload_pair)
 {
   int payload_pointer = payload_pair.first;
   int command = payload_pair.second;
-  int rec_addr = obtain_address(command);	
+  int rec_addr = Message::obtain_address(command);
 
   mx.lock();
   switch ((int)command & 7) // Checking the command bits
@@ -75,9 +57,10 @@ string pack_read_payload()
 
 int main(int argc, char *argv[])
 {
-  //setlogmask(LOG_UPTO(LOG_NOTICE));
+  // TODO: Create seg handler to delete the SHM.
   openlog("Falcon:RTU", LOG_CONS | LOG_NDELAY | LOG_PERROR | LOG_PID, LOG_USER);
 
+  // TODO: Move the below Daemon code to a function
   #if DEBUG == 0 // MAKE ME A DAEMON
   pid_t pid, sid;
   pid = fork();
@@ -110,18 +93,19 @@ int main(int argc, char *argv[])
     // Blocking socket - receive
     buff = new_sock->sock_recv();
     if (buff == "ERROR")
-      return -1;	
+      return -1;
 
-    vector<pair<int,int>> str_buff(decode(buff));
+    Message *rxRequest = new Message(buff); // Creating new object for storing the RX stuff.
+
     vector<thread> threads;
 
-    read_values.resize(str_buff.size()); // Make the size to the received length
+    read_values.resize(rxRequest->getNumberOfRequests()); // Make the size to the received length
 
     string decoded = "Decoded:" + buff;
     syslog(LOG_INFO, "%s", decoded.c_str());
 
     // Make every read/write operation into threads for the sake of concurrency
-    for (vector<pair<int, int>>::iterator ele = str_buff.begin(); ele != str_buff.end(); ele++)    
+    for (vector<pair<int, int>>::iterator ele = rxRequest->requests.begin(); ele != rxRequest->requests.end(); ele++)    
       threads.push_back(thread(perform_action, *ele));
     
     // Join all the started threads
@@ -133,14 +117,8 @@ int main(int argc, char *argv[])
       new_sock->sock_send(pack_read_payload());
     else
       new_sock->sock_send(string("WDone"));
+
+    delete rxRequest;
   }
   return 0;
-}
-
-// Used to obtain address from the Packet received
-int obtain_address(int rec_cmd)
-{
-  int rec_addr = ((rec_cmd & ADR) >> ADDOFF); //Obtaining the Address from the Packet received
-  //cout << "Address: " << rec_addr << endl; // Debug
-  return rec_addr;
 }

@@ -35,14 +35,8 @@
 
 #define VAL 134215680 //Mask for value 
 #define SIGN 27
-
-#define ADR 2040 //Mask for address
 #define VALOFF 11 //New write value Offset
-#define ADDOFF 3 //Address value Offset
 
-int obtain_address(int);
-string trim_string(string);
-vector<pair<int,int>> decode(string);
 void perform_action(pair<int, int>);
 
 shared_ptr<make_fsock> new_sock = make_shared<make_fsock>(PORT);

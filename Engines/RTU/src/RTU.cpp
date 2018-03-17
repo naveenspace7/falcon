@@ -8,14 +8,15 @@ using namespace pugi;
 void perform_action(pair<int, int> payload_pair)
 {
   int payload_pointer = payload_pair.first;
-  int command = payload_pair.second;
-  int rec_addr = Message::obtain_address(command);
+  int command = payload_pair.second; // Raw command, this includes even the address and value (if present)
+  int rec_addr = Message::obtain_address(command); // Obtains the address from the raw command
 
-  mx.lock();
-  switch ((int)command & 7) // Checking the command bits
+  Command requestedCmd = (Command) ((int)command & 7); // Converting to enum
+
+  mx.lock(); // Locking to prevent racing among threads to print to log
+  switch (requestedCmd) // Checking the command bits
   {
-    // TODO: Make the commands as enum
-    case 1: //Read command
+    case READ:
     {
       read_flag = true;
      
@@ -26,11 +27,10 @@ void perform_action(pair<int, int> payload_pair)
       break;
     }
 
-    case 2: // Write Command
+    case WRITE:
     {
       bitset<32> incoming_cmd = command;
       read_flag = false;
-      string log_msg;
 
       int writeValue = ((command & VAL) >> VALOFF); //Obtaining the new value to be written from the payload
       if (incoming_cmd.test(SIGN) == 1)
@@ -128,7 +128,7 @@ void RunAsDaemon()
   close(STDERR_FILENO);
 }
 
-//
+// Logs the operation done
 void LogReadWriteOperation(const string& signalName, int& signalValue, bool& readFlag)
 {
   string log_msg;

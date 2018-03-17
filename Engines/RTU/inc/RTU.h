@@ -52,4 +52,6 @@ mutex mx;
 bool read_flag = false;
 vector<string> read_values;
 
+enum Command { READ = 1, WRITE};
+
 #endif

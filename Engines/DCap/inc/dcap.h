@@ -26,6 +26,7 @@
 #include "fsock.h"
 #include <syslog.h>
 #include <chrono>
+#include "Message.h"
 
 #define PORT 2018
 
@@ -41,5 +42,11 @@ shared_ptr<make_fsock> new_sock = make_shared<make_fsock>(PORT);
 chrono::system_clock::time_point start_recording, instant_point;
 chrono::milliseconds time_taken;
 int time_taken_val;
+
+void StartUpOperations();
+void RunAsDaemon();
+int* shm;
+
+Message* rxRequest;
 
 #endif

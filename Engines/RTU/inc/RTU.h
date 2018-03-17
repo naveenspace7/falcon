@@ -45,7 +45,7 @@ map<int, string> sig_map; // address - name
 map<string, int> name_addr; // name - address
 
 int* shm;
-
+void RunAsDaemon();
 mutex mx;
 bool read_flag = false;
 vector<string> read_values;

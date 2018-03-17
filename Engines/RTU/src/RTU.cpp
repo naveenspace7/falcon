@@ -62,21 +62,7 @@ int main(int argc, char *argv[])
 
   // TODO: Move the below Daemon code to a function
   #if DEBUG == 0 // MAKE ME A DAEMON
-  pid_t pid, sid;
-  pid = fork();
-  if(pid < 0)
-    exit(EXIT_FAILURE);
-  if(pid > 0)
-    exit(EXIT_SUCCESS);
-  umask(0);	
-  sid = setsid();
-  if(sid < 0)
-    exit(EXIT_FAILURE);
-  if((chdir("/")) < 0)
-    exit(EXIT_FAILURE);
-  close(STDIN_FILENO);
-  close(STDOUT_FILENO);
-  close(STDERR_FILENO);
+  RunAsDaemon();
   #endif
 
   syslog(LOG_INFO, "Starting RTU Engine");
@@ -121,4 +107,24 @@ int main(int argc, char *argv[])
     delete rxRequest;
   }
   return 0;
+}
+
+// Forking done for creating a Daemon
+void RunAsDaemon()
+{
+  pid_t pid, sid;
+  pid = fork();
+  if(pid < 0)
+    exit(EXIT_FAILURE);
+  if(pid > 0)
+    exit(EXIT_SUCCESS);
+  umask(0); 
+  sid = setsid();
+  if(sid < 0)
+    exit(EXIT_FAILURE);
+  if((chdir("/")) < 0)
+    exit(EXIT_FAILURE);
+  close(STDIN_FILENO);
+  close(STDOUT_FILENO);
+  close(STDERR_FILENO);
 }

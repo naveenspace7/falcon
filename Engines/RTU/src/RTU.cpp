@@ -19,10 +19,8 @@ void perform_action(pair<int, int> payload_pair)
     case READ:
     {
       read_flag = true;
-     
       int readValue = *(shm + rec_addr); // Reading the value from the SHM
       LogReadWriteOperation(sig_map[rec_addr], readValue, read_flag);
-
       read_values[payload_pointer] = to_string(readValue); // Put it into the right place
       break;
     }
@@ -31,8 +29,8 @@ void perform_action(pair<int, int> payload_pair)
     {
       bitset<32> incoming_cmd = command;
       read_flag = false;
-
       int writeValue = ((command & VAL) >> VALOFF); //Obtaining the new value to be written from the payload
+      
       if (incoming_cmd.test(SIGN) == 1)
         writeValue = 0 - writeValue;
       
@@ -57,20 +55,9 @@ string pack_read_payload()
 int main(int argc, char *argv[])
 {
   // TODO: Create seg handler to delete the SHM.
-  openlog("Falcon:RTU", LOG_CONS | LOG_NDELAY | LOG_PERROR | LOG_PID, LOG_USER);
+  StartUpOperations();
 
-  // TODO: Move the below Daemon code to a function
-  #if DEBUG == 0 // MAKE ME A DAEMON
-  RunAsDaemon();
-  #endif
-
-  syslog(LOG_INFO, "Starting RTU Engine");
-  // Daemon code ends here and actual code start from here
-
-  shm = get_base(); // Obtain the base address of the shared memory
-  signals::make_map(sig_map, name_addr); // Signal address to signal name map
-
-  //thread TCPthread(background_monitor, cref(sig_map));	
+  //thread TCPthread(background_monitor, cref(sig_map));
   string buff; // Buffer to store the incoming request
 
   while(1)
@@ -82,12 +69,10 @@ int main(int argc, char *argv[])
 
     Message *rxRequest = new Message(buff); // Creating new object for storing the RX stuff.
 
+    LogIncomingCommand(buff);
+
     vector<thread> threads;
-
     read_values.resize(rxRequest->getNumberOfRequests()); // Make the size to the received length
-
-    string decoded = "Decoded:" + buff;
-    syslog(LOG_INFO, "%s", decoded.c_str());
 
     // Make every read/write operation into threads for the sake of concurrency
     for (vector<pair<int, int>>::iterator ele = rxRequest->requests.begin(); ele != rxRequest->requests.end(); ele++)    
@@ -128,6 +113,21 @@ void RunAsDaemon()
   close(STDERR_FILENO);
 }
 
+// Performs some basic logging and house keeping task
+void StartUpOperations()
+{
+  openlog("Falcon:RTU", LOG_CONS | LOG_NDELAY | LOG_PERROR | LOG_PID, LOG_USER);
+
+  #if DEBUG == 0 // MAKE ME A DAEMON
+  RunAsDaemon();
+  #endif
+
+  syslog(LOG_INFO, "Starting RTU Engine");
+
+  shm = get_base(); // Obtain the base address of the shared memory
+  signals::make_map(sig_map, name_addr); // Signal address to signal name map
+}
+
 // Logs the operation done
 void LogReadWriteOperation(const string& signalName, int& signalValue, bool& readFlag)
 {
@@ -145,4 +145,11 @@ void LogReadWriteOperation(const string& signalName, int& signalValue, bool& rea
   }
 
   syslog(LOG_INFO, "%s", log_msg.c_str());
+}
+
+// Logs the incoming command
+void LogIncomingCommand(const string& rxCommand)
+{
+  string decoded = "Decoded:" + rxCommand;
+  syslog(LOG_INFO, "%s", decoded.c_str());
 }

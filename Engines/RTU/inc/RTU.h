@@ -48,6 +48,9 @@ int* shm;
 void RunAsDaemon();
 
 void LogReadWriteOperation(const string&, int&, bool&);
+void LogIncomingCommand(const string&);
+void StartUpOperations();
+
 mutex mx;
 bool read_flag = false;
 vector<string> read_values;

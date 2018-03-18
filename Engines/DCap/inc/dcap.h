@@ -47,6 +47,6 @@ void StartUpOperations();
 void RunAsDaemon();
 int* shm;
 
-Message* rxRequest;
+shared_ptr<Message> rxRequest;
 
 #endif

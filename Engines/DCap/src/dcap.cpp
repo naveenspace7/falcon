@@ -99,12 +99,8 @@ int main()
 		string log_msg = "Request Rx:" + buff;
 		syslog(LOG_INFO, "%s", log_msg.c_str());
 
-		rxRequest = new Message(buff);
-
-		//payload = decode_string(buff);
-
-		cout << rxRequest->mRecord << endl; // Debug
-
+		rxRequest = make_shared<Message>(buff);
+		//cout << rxRequest->mRecord << endl; // Debug
 		if(rxRequest->mRecord)
 			record = true;
 		else
